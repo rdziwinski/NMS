@@ -1,9 +1,10 @@
-from core.statements import *
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 import sqlalchemy.exc
 from sqlalchemy.orm import sessionmaker
+from core.statements import *
+
 
 Base = declarative_base()
 
@@ -11,7 +12,7 @@ Base = declarative_base()
 class Host(Base):
 
     Base.__tablename__ = "hosts"  # Nazwa bazy
-    engine = create_engine('sqlite:///hosts.db')  # Tworzmy baze ktora bedzie przechowywac dane w lokalnym katalogu.
+    engine = create_engine('sqlite:///../data/hosts.db')  # Tworzmy baze ktora bedzie przechowywac dane w lokalnym katalogu.
     Base.metadata.create_all(engine)  # Tworzymy cala tabele. Odpowiednie do CREATE TABLE
     Base.metadata.bind = engine
 
@@ -20,7 +21,7 @@ class Host(Base):
 
     name = Column(String(30), primary_key=True, nullable=False)  # Deklaracje pol bazy
     description = Column(String(255))
-    address = Column(String(40), nullable=False)
+    address = Column(String(40), nullable=False, unique=True)
     snmp_version = Column(Integer, nullable=False)
     community = Column(String(30))
     security_name = Column(String(30))
@@ -30,12 +31,14 @@ class Host(Base):
     priv_protocol = Column(String(30))
     auth_key = Column(String(30))
 
-
-try:
-    host = Host(address='192.168.1.5', snmp_version='2', name='R7')
-    Host.session.add(host)
-    Host.session.commit()
-except sqlalchemy.exc.IntegrityError as err:
-    error = Statements()
-    print(err.params[0] + " " + error.get_statement(err))
-    Host.session.rollback()
+    def add(self):
+        try:
+            Host.session.add(self)
+            Host.session.commit()
+        except sqlalchemy.exc.IntegrityError as err:
+            error = Statements()
+            print(str(err.params[0]) + " " + error.get_statement(err))
+            Host.session.rollback()
+        except:
+            print("Inny wyjatek")
+            Host.session.rollback()

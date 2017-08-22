@@ -1,5 +1,5 @@
-from core.statements import *
 import json
+from core.statements import *
 
 
 class File:
@@ -17,7 +17,8 @@ class File:
                 return self.data
         except Exception as err:
             error = Statements()
-            sys.exit(error.get_statement(err, "Wlasny komunikat."))
+            statement = error.get_statement(err, str(err))
+            return statement
 
     def get_record(self, level_1, level_2=""):
         try:

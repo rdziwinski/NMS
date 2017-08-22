@@ -6,10 +6,10 @@ import sys
 class Statements:
 
     def __init__(self):
-        settings = File("manager.json")
+        settings = File("../data/manager.json")
         self.lang = settings.get_record("lang")
         self.debug = settings.get_record("debug")
-        self.statements_data = File("statements.json").read_file()
+        self.statements_data = File("../data/statements.json").read_file()
 
     def get_statement(self, err, own=""):
         if self.debug == 1:
