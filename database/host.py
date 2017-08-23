@@ -5,24 +5,26 @@ import sqlalchemy.exc
 from sqlalchemy.orm import sessionmaker
 from core.statements import *
 
-
 Base = declarative_base()
 
 
-class Host(Base):
-
+def create_base():
     Base.__tablename__ = "hosts"  # Nazwa bazy
-    engine = create_engine('sqlite:///../data/hosts.db')  # Tworzmy baze ktora bedzie przechowywac dane w lokalnym katalogu.
+    engine = create_engine('sqlite:///../data/hosts.db')  # Tworzmy baze ktora bedzie przechowywac dane.
     Base.metadata.create_all(engine)  # Tworzymy cala tabele. Odpowiednie do CREATE TABLE
     Base.metadata.bind = engine
 
     db_session = sessionmaker(bind=engine)
     session = db_session()
+    return session
 
-    name = Column(String(30), primary_key=True, nullable=False)  # Deklaracje pol bazy
+
+class Host(Base):
+    create_base()
+    name = Column(String(30), primary_key=True, nullable=True)  # Deklaracje pol bazy
     description = Column(String(255))
     address = Column(String(40), nullable=False, unique=True)
-    snmp_version = Column(Integer, nullable=False)
+    snmp_version = Column(String(2), nullable=False)
     community = Column(String(30))
     security_name = Column(String(30))
     security_level = Column(String(30))
@@ -42,3 +44,7 @@ class Host(Base):
         except:
             print("Inny wyjatek")
             Host.session.rollback()
+
+
+if __name__ == '__main__':
+    create_base()

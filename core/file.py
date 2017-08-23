@@ -5,7 +5,7 @@ from core.statements import *
 class File:
     data = []
 
-    def __init__(self, file_name='clients.json', mode='r'):
+    def __init__(self, file_name='../data/manager.json', mode='r'):
         self.file_name = file_name
         self.mode = mode
         self.read_file()
