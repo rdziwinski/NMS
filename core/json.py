@@ -2,7 +2,7 @@ import json
 from core.statements import *
 
 
-class File:
+class Json:  # change from File
     data = []
 
     def __init__(self, file_name='../data/manager.json', mode='r'):
