@@ -14,23 +14,17 @@ class UploadFile:
                filename.rsplit('.', 1)[1].lower() in self.allowed_extensions
 
     def upload_file(self):
-        if request.method == 'POST':  # check if the post request has the file part
-            if 'file' not in request.files:
-                error = 'No file part'
-                # flash('No file part')
-                # return redirect(request.url)
-                return error
+        if request.method == 'POST':
+            if 'file' not in request.files:  # check if the post request has the file part
+                statement = 'No file part'
+                return statement
             file = request.files['file']
-            # if user does not select file, browser also
-            # submit a empty part without filename
             if file.filename == '':
-                error = 'No selected file'
-                # flash('No selected file')
-                # return redirect(request.url)
-                return error
+                statement = 'No selected file'
+                return statement
             if not self.allowed_file(file.filename):
-                error = "Illegal extension"
-                return error
+                statement = "Illegal extension"
+                return statement
             if file:
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(self.upload_folder, filename))

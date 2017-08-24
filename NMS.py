@@ -10,20 +10,19 @@ app = Flask(__name__)
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'data')
 
+app.config['Name'] = 'Network Monitoring Software'
+
 
 @app.route('/')
 def hello_world():
     return 'Hello World!'
 
 
-# Upload file start
 @app.route('/admin', methods=['GET', 'POST'])
 def upload_file():
     upload = UploadFile(UPLOAD_FOLDER, ['xlsx', 'jpg', 'txt'])
     result = upload.upload_file()
-    return render_template('admin.html', name="Administrator", error=result)
-
-# Upload file end
+    return render_template('admin.html', name="Administrator", statement=result)
 
 
 if __name__ == '__main__':

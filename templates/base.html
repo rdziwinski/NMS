@@ -2,16 +2,39 @@
 <html lang="en">
 <head>
     {% block head %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="../static/style.css"/>
-        <title>{% block title %}{% endblock %} - NMS</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+        <title>NMS - {% block title %}{% endblock %}</title>
     {% endblock %}
 </head>
 <body>
-<div id="content">{% block content %}{% endblock %}</div>
-<div id="footer">
-    {% block footer %}
-        &copy; Copyright 2016 by Rafał Dziwiński.
-    {% endblock %}
+<div class="container-fluid">
+    <div class="header row">
+        <div class="col">
+            <h1 class="center h3 text-center">{{ config['Name'] }} <small class="text-muted"> {{ name }} </small></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-2">
+            Menu czy cos
+        </div>
+        <div class="col-xl-6">
+            Miejsce na cos duzego
+        </div>
+        <div class="col-xl-4">
+            <h3 class="h5">Export form *.xlsx</h3>
+            {% block upload_file %}{% endblock %}
+        </div>
+    </div>
+    <div class="footer row">
+        <div class="col">
+            {% block footer %}
+                &copy; Copyright 2016 by Rafał Dziwiński.
+            {% endblock %}
+        </div>
+    </div>
 </div>
 </body>
 </html>
