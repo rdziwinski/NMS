@@ -1,50 +1,44 @@
-from sqlalchemy import *
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine
-import sqlalchemy.exc
-from sqlalchemy.orm import sessionmaker
-from core.statements import *
-
-Base = declarative_base()
+from NMS import db
 
 
-def create_base():
-    Base.__tablename__ = "hosts"  # Nazwa bazy
-    engine = create_engine('sqlite:///../data/hosts.db')  # Tworzmy baze ktora bedzie przechowywac dane.
-    Base.metadata.create_all(engine)  # Tworzymy cala tabele. Odpowiednie do CREATE TABLE
-    Base.metadata.bind = engine
+class Host(db.Model):
+    name = db.Column(db.String(30), primary_key=True)  # Deklaracje pol bazy
+    description = db.Column(db.String(255))
+    address = db.Column(db.String(40))
+    snmp_version = db.Column(db.String(2))
+    community = db.Column(db.String(30))
+    security_name = db.Column(db.String(30))
+    security_level = db.Column(db.String(30))
+    auth_protocol = db.Column(db.String(30))
+    priv_key = db.Column(db.String(30))
+    priv_protocol = db.Column(db.String(30))
+    auth_key = db.Column(db.String(30))
 
-    db_session = sessionmaker(bind=engine)
-    session = db_session()
-    return session
+    def __init__(self, name="", description="", address="", snmp_version="", community="", security_name="",
+                 security_level="", auth_protocol="", priv_key="", priv_protocol="", auth_key=""):
+        self.name = name
+        self.description = description
+        self.address = address
+        self.snmp_version = snmp_version
+        self.community = community
+        self.security_name = security_name
+        self.security_level = security_level
+        self.auth_protocol = auth_protocol
+        self.priv_key = priv_key
+        self.priv_protocol = priv_protocol
+        self.auth_key = auth_key
 
+    def __repr__(self):
+        return self.name
 
-class Host(Base):
-    create_base()
-    name = Column(String(30), primary_key=True, nullable=True)  # Deklaracje pol bazy
-    description = Column(String(255))
-    address = Column(String(40), nullable=False, unique=True)
-    snmp_version = Column(String(2), nullable=False)
-    community = Column(String(30))
-    security_name = Column(String(30))
-    security_level = Column(String(30))
-    auth_protocol = Column(String(30))
-    priv_key = Column(String(30))
-    priv_protocol = Column(String(30))
-    auth_key = Column(String(30))
-
-    def add(self):
+    def add(self, data):
         try:
-            Host.session.add(self)
-            Host.session.commit()
-        except sqlalchemy.exc.IntegrityError as err:
-            error = Statements()
-            print(str(err.params[0]) + " " + error.get_statement(err))
-            Host.session.rollback()
+            db.drop_all()
+            db.create_all()
+            for i in range(1, 4):
+                host = Host(data[0][i], data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
+                            data[7][i], data[8][i], data[9][i], data[10][i])
+                db.session.add(host)
+            db.session.commit()
         except:
-            print("Inny wyjatek")
-            Host.session.rollback()
-
-
-if __name__ == '__main__':
-    create_base()
+            return 1
