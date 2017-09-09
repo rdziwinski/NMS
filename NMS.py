@@ -69,7 +69,7 @@ admin = Admin(app, 'Example: Layout', base_template='layout.html')
 admin.add_view(CustomView(Host, db.session))
 
 
-@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/administrator', methods=['GET', 'POST'])
 def admin_hp():
     error = ""
     success = ""
