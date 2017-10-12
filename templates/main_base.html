@@ -17,22 +17,16 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xl-2">
-            Menu czy cos
-        </div>
-        <div class="col-xl-6">
-            Miejsce na cos duzego
-        </div>
-        <div class="col-xl-4">
-            <h3 class="h5">Export form *.xlsx</h3>
+        <div class="col-xl-3">
             {% block upload_file %}{% endblock %}
+        </div>
+        <div class="col-xl-9">
+            {% block show_all %}{% endblock %}
         </div>
     </div>
     <div class="footer row">
         <div class="col">
-            {% block footer %}
-                &copy; Copyright 2016 by Rafał Dziwiński.
-            {% endblock %}
+            &copy; Copyright 2016 by Rafał Dziwiński.
         </div>
     </div>
 </div>
