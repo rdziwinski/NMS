@@ -1,5 +1,10 @@
-from NMS import db
+from flask import Flask, render_template, request
+from flask_sqlalchemy import SQLAlchemy
 
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
+db = SQLAlchemy(app)
+app.config['SECRET_KEY'] = '123456790'
 
 class Host(db.Model):
     name = db.Column(db.String(30), primary_key=True)  # Deklaracje pol bazy
@@ -42,3 +47,8 @@ class Host(db.Model):
             db.session.commit()
         except:
             return 1
+
+    def print_all(self):  # lepiej da filter dla snmp2 i 3
+        return db.session.query(Host.name, Host.description, Host.address, Host.snmp_version, Host.community,
+                                Host.security_name, Host.security_level, Host.auth_protocol, Host.priv_key,
+                                Host.priv_protocol, Host.auth_key).all()

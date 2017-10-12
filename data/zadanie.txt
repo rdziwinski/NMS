@@ -1,0 +1,29 @@
+IM20119
+Proszę o uruchomienie monitoring poniższych urządzeń:
+--------------------------------------------------------------------------------------------------
+IP: 10.81.255.37 WS-C4948E snmp-server user q4net_snmp v3 auth sha SDaafqw.e224D priv aes 128 SDaafqw.e224D NAGIOS, grupa DC_ToR: FAN, CPU, MEM, POWER1, POWER2, TEMP1, TEMP2, UPTIME, int Port-channel7, int te 1/51, int te 1/52 CACTI, grupa ToR: CPU, MEM, UPTIME, int Port-channel7, int te 1/51, int te 1/52
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
+IP: 10.81.255.38 WS-C4948E snmp-server user q4net_snmp v3 auth sha SDaafqw.e224D priv aes 128 SDaafqw.e224D NAGIOS, grupa DC_ToR: FAN, CPU, MEM, POWER1, POWER2, TEMP1, TEMP2, UPTIME, int Port-channel5, int te 1/51, int te 1/52 CACTI, grupa ToR: CPU, MEM, UPTIME, int Port-channel5, int te 1/51, int te 1/52
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
+IP: 10.81.255.39 WS-C4948E snmp-server user q4net_snmp v3 auth sha SDaafqw.e224D priv aes 128 SDaafqw.e224D NAGIOS, grupa DC_ToR: FAN, CPU, MEM, POWER1, POWER2, TEMP1, TEMP2, UPTIME, int Port-channel5, int te 1/51, int te 1/52 CACTI, grupa ToR: CPU, MEM, UPTIME, int Port-channel5, int te 1/51, int te 1/52
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
+IP: 10.81.255.40 WS-C4948E snmp-server user q4net_snmp v3 auth sha SDaafqw.e224D priv aes 128 SDaafqw.e224D NAGIOS, grupa DC_ToR: FAN, CPU, MEM, POWER1, POWER2, TEMP1, TEMP2, UPTIME, int Port-channel18, int te 1/51, int te 1/52 CACTI, grupa ToR: CPU, MEM, UPTIME, int Port-channel18, int te 1/51, int te 1/52
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
+IP: 10.81.255.41 WS-C4948E snmp-server user q4net_snmp v3 auth sha SDaafqw.e224D priv aes 128 SDaafqw.e224D NAGIOS, grupa DC_ToR: FAN, CPU, MEM, POWER1, POWER2, TEMP1, TEMP2, UPTIME, int Port-channel19, int te 1/51, int te 1/52 CACTI, grupa ToR: CPU, MEM, UPTIME, int Port-channel19, int te 1/51, int te 1/52
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
+IP: 10.81.255.42 NEXUS 5548UP snmp-server user q4net_snmp v3 auth sha SDaafqw.e224D priv aes 128 SDaafqw.e224D NAGIOS, grupa DC_ToR: FAN, CPU, MEM, POWER1, POWER2, TEMP, int fc1/31, fc1/32, Eth1/1-7, Eth1/9-12, Po4091, Po4092, Po4096 CACTI, grupa ToR: CPU, MEM, UPTIME, int fc1/31, fc1/32, Eth1/1-7, Eth1/9-12, Po4091, Po4092, Po4096
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
+IP: 10.81.255.43 NEXUS 5548UP snmp-server user q4net_snmp v3 auth sha SDaafqw.e224D priv aes 128 SDaafqw.e224D NAGIOS, grupa DC_ToR: FAN, CPU, MEM, POWER1, POWER2, TEMP, int fc1/31, fc1/32, Eth1/1-7, Eth1/9-12, Po4091, Po4092, Po4096 CACTI, grupa ToR: CPU, MEM, UPTIME, int fc1/31, fc1/32, Eth1/1-7, Eth1/9-12, Po4091, Po4092, Po4096
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
+IP: 10.81.255.44 NEXUS 56128 snmp-server user q4net_snmp v3 auth sha SDaafqw.e224D priv aes 128 SDaafqw.e224D NAGIOS, grupa DC_ToR: FAN, CPU, MEM, POWER1, POWER2, TEMP, int fc3/23, fc3/24, Eth1/1-7, Eth1/9-12, Po4091, Po4092, Po4096 CACTI, grupa ToR: CPU, MEM, UPTIME, int fc3/23, fc3/24, Eth1/1-7, Eth1/9-12, Po4091, Po4092, Po4096
+--------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
+IP: 10.81.255.45 NEXUS 56128 snmp-server user q4net_snmp v3 auth sha SDaafqw.e224D priv aes 128 SDaafqw.e224D NAGIOS, grupa DC_ToR: FAN, CPU, MEM, POWER1, POWER2, TEMP, int fc3/23, fc3/24, Eth1/1-7, Eth1/9-12, Po4091, Po4092, Po4096 CACTI, grupa ToR: CPU, MEM, UPTIME, int fc3/23, fc3/24, Eth1/1-7, Eth1/9-12, Po4091, Po4092, Po4096
+--------------------------------------------------------------------------------------------------

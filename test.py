@@ -1,4 +1,4 @@
-from database.host import *
+from core.host import *
 
 poka = db.session.query(Host.description).all()
 print(poka[1])
