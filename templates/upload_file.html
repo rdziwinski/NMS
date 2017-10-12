@@ -1,18 +1,21 @@
 {% extends "main_base.html" %}
 {% block title %}{{ name }}{% endblock %}
 {% block head %}
-    {{ super() }}
+{{ super() }}
 {% endblock %}
 {% block upload_file %}
 
-<form method=post enctype=multipart/form-data>
-    <p>
-        <input type=file name=file>
-        Category:
-        <input type="text" name="category" title="category">
-        <input type=submit value=Upload>
-    </p>
-</form>
+    <h3 class="h5">Export form *.xlsx</h3>
+
+    <form method=post enctype=multipart/form-data>
+        <p>
+            <input type=file name=file>
+            Category:
+            <input type="text" name="category" title="category">
+            <input type=submit value=Upload>
+        </p>
+    </form>
+
     {% if success %}
         <div class="alert alert-success" role="alert">
             {{ success }}
@@ -28,4 +31,5 @@
             </div>
         {% endfor %}
     {% endif %}
+
 {% endblock %}
