@@ -1,0 +1,8 @@
+{% extends "main_base.html" %}
+{% block title %}{{ name }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block show_monitoring %}
+{{ data }}
+{% endblock %}

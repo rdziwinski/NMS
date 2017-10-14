@@ -1,4 +1,10 @@
-from NMS import db
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
+db = SQLAlchemy(app)
+app.config['SECRET_KEY'] = '123456790'
 
 
 class Host(db.Model):
@@ -33,17 +39,19 @@ class Host(db.Model):
     def __repr__(self):
         return self.name
 
-    def add(self, data, category):
-        try:
+    def add(self, data, category, erase): # dodac obsluge bledu jak juz jest host dodany UNIQUE
+        #try:
+        db.session.rollback()
+        if erase == ['erase']:
             db.drop_all()
-            db.create_all()
-            for i in range(1, 4):
-                host = Host(data[0][i], data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
-                            data[7][i], data[8][i], data[9][i], data[10][i], category)
-                db.session.add(host)
-            db.session.commit()
-        except:
-            return 1
+        db.create_all()
+        for i in range(1, len(data[1])):
+            host = Host(data[0][i], data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
+                        data[7][i], data[8][i], data[9][i], data[10][i], category)
+            db.session.add(host)
+        db.session.commit()
+       # except:
+        #    return 1
 
     def show_all(self):
         one_host = []
