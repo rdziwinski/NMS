@@ -1,55 +1,39 @@
-from core.checker import Checker
 import datetime
-import time as timee
-
-
-class CheckEngine(Checker):
-    def __init__(self, hosts):
-        self.hosts = hosts
-
-    def run(self, check):
+from multiprocessing.dummy import Pool as ThreadPool
+from core.checker import *
 
 
 
-
-hosts = [['Router V1', 'Routers', 'Opis', '192.168.1.1', '3', None, 'Admin', 'authPriv', 'MD5', 'Password',
-          'DES', 'Password', True, False, 'interface_status', 'interface_utilization', True, False],
-         ['Router V2', 'Routers', 'Opis asdasd', '192.168.1.2', '3', None, 'Admin', 'authPriv', 'MD5',
-          'Password', 'DES', 'Password', True, True, 'fa0/1', 'fa0/1', None, False],
-         ['Switch drugi', 'Switches', 'Opis 2', '192.168.1.5', '3', None, 'Admin', 'authPriv', 'MD5',
-          'Password', 'DES', 'ok', True, True, 'fa0/3', 'fa0/3', True, False],
-         ['Switch glowny4', 'Switches', 'Opisdwa', '192.168.1.6', '2c', 'Password', None, None, None, None, None,
-          None, True, True, 'fa0/3', 'fa0/3', True, False]]
-
-check = Checker()
+hosts = [['1', 'Router V1', 'Routers', 'Opis', '192.168.202.1', '2', 'Password', 'Admin', 'authPriv', 'MD5', 'Password',
+          'DES', 'Password', True, False, False, 'FastEthernet0/1,FastEthernet0/0', True, False],
+         ['2', 'Router V2', 'Routers', 'Opis asdasd', '192.168.202.1', '2', 'Password', 'Admin', 'authPriv', 'MD5',
+          'Password', 'DES', 'Password', True, False, False, 'FastEthernet0/1,FastEthernet0/0', True, True]]
 
 
-def test(ipaddress):
-    timee.sleep(1)
-    temp = "test: " + ipaddress
-    return temp
+class CheckEngine:
+    def check_service(self, host):
+        result = []
 
+        spr = Checker(host)
+        if host[13] is True:
+            result.append(spr.uptime())
+        if host[14] is True:
+            result.append("ping")
+        if host[15] is not False and host[15] is not None:
+            result.append(spr.interface(host[15], 'status'))
+        if host[16] is not False and host[15] is not None:
+            result.append(spr.interface(host[16], 'utilization'))
+        if host[17] is True:
+            result.append(spr.chassis_temperature())
+        if host[18] is True:
+            result.append(spr.fan_status())
+        return result
 
-result = []
-for i in range(0, len(hosts)):
-    temp = []
-    if hosts[i][13] is True:
-        temp2 = []
+    def run(self, host):
+        result = []
+        date = datetime.datetime.now().date()
         time = datetime.datetime.now().time()
-        temp2.append(str(time).split(".")[0])
-        temp2.append("Ping")
-        temp2.append(check.ping(hosts[i][3]))
-        temp.append(temp2)
-    if hosts[i][12] is True:
-        temp2 = []
-        time = datetime.datetime.now().time()
-        temp2.append(str(time).split(".")[0])
-        temp2.append("Test")
-        temp2.append(test(hosts[i][1]))
-        temp.append(temp2)
-    result.append(temp)
-
-
-print(result)
-
-# name	description	address	snmp_version	community	security_name	security_level	auth_protocol	priv_key	priv_protocol	auth_key	uptime	ping	interface_status	interface_utilization	chassis_temperature	fan_status
+        result.append(str(date).split(".")[0])
+        result.append(str(time).split(".")[0])
+        result.append(self.check_service(host))
+        return result
