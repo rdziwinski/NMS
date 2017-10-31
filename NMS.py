@@ -1,13 +1,14 @@
-from flask import render_template, request, Flask
-from core.upload_file import UploadFile
-from core.import_host import ImportHost
-from core.database import *
-from core.check_engine import CheckEngine
 from multiprocessing.dummy import Pool as ThreadPool
 
+from flask import render_template, request, Flask
 
+from core.check_engine import CheckEngine
+from core.database_engine import *
+from core.import_host import ImportHost
+from core.upload_file import UploadFile
 
 app = Flask(__name__)
+
 
 @app.route('/administrator', methods=['GET', 'POST'])
 def admin_hp():
@@ -34,7 +35,7 @@ def admin_hp():
         elif import_category.is_empty() == 1:
             error = import_category.print_errors()
         else:
-            if Host().add(import_category.print_file(), category, erase) == 1:
+            if Database().add_host(import_category.print_file(), category, erase) == 1:
                 error = 'Add to database failed.'
                 return render_template('upload_file.html', name="Administrator", error=error)
             success = "Import host successful"
@@ -43,16 +44,22 @@ def admin_hp():
 
 @app.route('/show_all', methods=['GET', 'POST'])
 def show_all():
-    database = Host().get_hosts()
+    database = Database().get_hosts()
     print(database)
-
     return render_template('show_all.html', name="Administrator", database=database)
+
+
+@app.route('/show_services', methods=['GET', 'POST'])
+def show_services():
+    database = Database().show_services()
+    print(database)
+    return render_template('show_services.html', name="Administrator", database=database)
 
 
 @app.route('/monitoring', methods=['GET', 'POST'])
 def monitoring():
-    hosts = Host().get_hosts()
     engine = CheckEngine()
+    hosts = Database().get_hosts()
     pool = ThreadPool(64)
     result = pool.map(engine.run, hosts)
     return render_template('monitoring.html', name="Administrator", result=result)

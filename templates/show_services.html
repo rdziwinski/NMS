@@ -1,0 +1,26 @@
+{% extends "main_base.html" %}
+{% block title %}{{ name }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block show_all %}
+<table class="table-striped">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>host_id</th>
+            <th>date</th>
+            <th>service state</th>>
+        </tr>
+    </thead>
+    <tbody>
+        {% for host in database %}
+            <tr>
+                {% for field in host %}
+                    <td>{{ field }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

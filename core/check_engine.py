@@ -1,7 +1,7 @@
 import datetime
 from multiprocessing.dummy import Pool as ThreadPool
 from core.checker import *
-
+from core.database_engine import *
 
 
 hosts = [['1', 'Router V1', 'Routers', 'Opis', '192.168.202.1', '2', 'Password', 'Admin', 'authPriv', 'MD5', 'Password',
@@ -17,23 +17,42 @@ class CheckEngine:
         spr = Checker(host)
         if host[13] is True:
             result.append(spr.uptime())
+        else:
+            result.append("")
         if host[14] is True:
             result.append("ping")
+        else:
+            result.append("")
         if host[15] is not False and host[15] is not None:
             result.append(spr.interface(host[15], 'status'))
+        else:
+            result.append("")
         if host[16] is not False and host[15] is not None:
             result.append(spr.interface(host[16], 'utilization'))
+        else:
+            result.append("")
         if host[17] is True:
             result.append(spr.chassis_temperature())
+        else:
+            result.append("")
         if host[18] is True:
             result.append(spr.fan_status())
+        else:
+            result.append("")
         return result
 
     def run(self, host):
         result = []
-        date = datetime.datetime.now().date()
-        time = datetime.datetime.now().time()
-        result.append(str(date).split(".")[0])
-        result.append(str(time).split(".")[0])
-        result.append(self.check_service(host))
+        time = datetime.datetime.now().time()  # porpawic na date i godzine
+        host_id = host[0]
+        date = str(time).split(".")[0]
+        services_states = self.check_service(host)
+        result.append(host_id)
+        result.append(date)
+        result.append(services_states)
+
+        add_to_database = ServicesState(host_id=host_id, date=date, services_states="dupa")
+        session.rollback()
+        session.add(add_to_database)
+        session.commit()
         return result
