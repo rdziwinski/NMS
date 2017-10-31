@@ -1,15 +1,13 @@
-from flask import render_template, request
+from flask import render_template, request, Flask
 from core.upload_file import UploadFile
 from core.import_host import ImportHost
 from core.database import *
 from core.check_engine import CheckEngine
 from multiprocessing.dummy import Pool as ThreadPool
-from core.checker import *
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
-db = SQLAlchemy(app)
-app.config['SECRET_KEY'] = '123456790'
 
+
+
+app = Flask(__name__)
 
 @app.route('/administrator', methods=['GET', 'POST'])
 def admin_hp():
@@ -45,7 +43,7 @@ def admin_hp():
 
 @app.route('/show_all', methods=['GET', 'POST'])
 def show_all():
-    database = Host().show_all()
+    database = Host().get_hosts()
     print(database)
 
     return render_template('show_all.html', name="Administrator", database=database)
@@ -53,7 +51,7 @@ def show_all():
 
 @app.route('/monitoring', methods=['GET', 'POST'])
 def monitoring():
-    hosts = Host().show_all()
+    hosts = Host().get_hosts()
     engine = CheckEngine()
     pool = ThreadPool(64)
     result = pool.map(engine.run, hosts)

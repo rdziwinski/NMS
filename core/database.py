@@ -1,34 +1,41 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, backref, sessionmaker
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
-db = SQLAlchemy(app)
-app.config['SECRET_KEY'] = '123456790'
+Base = declarative_base()
+engine = create_engine('sqlite:////root/home/user/NMS/data/database.db', echo=True)
+Session = sessionmaker(bind=engine)
+session = Session()
 
 
-class Host(db.Model):
-    #id = db.Column(db.Integer, db.ForeignKey('Service.id'),
-    #               primary_key=True, nullable=False)
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(30))
-    category = db.Column(db.String(30))
-    description = db.Column(db.String(255))
-    address = db.Column(db.String(40))
-    snmp_version = db.Column(db.String(2))
-    community = db.Column(db.String(30))
-    security_name = db.Column(db.String(30))
-    security_level = db.Column(db.String(30))
-    auth_protocol = db.Column(db.String(30))
-    priv_key = db.Column(db.String(30))
-    priv_protocol = db.Column(db.String(30))
-    auth_key = db.Column(db.String(30))
-    uptime = db.Column(db.Boolean)
-    ping = db.Column(db.Boolean)
-    interface_status = db.Column(db.String(30))
-    interface_utilization = db.Column(db.String(30))
-    chassis_temperature = db.Column(db.Boolean)
-    fan_status = db.Column(db.Boolean)
+class Host(Base):
+    __tablename__ = 'hosts'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(30))
+    category = Column(String(30))
+    description = Column(String(255))
+    address = Column(String(40))
+    snmp_version = Column(String(2))
+    community = Column(String(30))
+    security_name = Column(String(30))
+    security_level = Column(String(30))
+    auth_protocol = Column(String(30))
+    priv_key = Column(String(30))
+    priv_protocol = Column(String(30))
+    auth_key = Column(String(30))
+    uptime = Column(Boolean)
+    ping = Column(Boolean)
+    interface_status = Column(String(30))
+    interface_utilization = Column(String(30))
+    chassis_temperature = Column(Boolean)
+    fan_status = Column(Boolean)
+
+    #services_states = relationship('ServicesState')
+
+    def __repr__(self):
+        return "<User(name='%s', category='%s', description='%s')>" % (
+            self.name, self.category, self.description)
 
     def __init__(self, name="",  category="", description="", address="", snmp_version="", community="", security_name="",
                  security_level="", auth_protocol="", priv_key="", priv_protocol="", auth_key="",
@@ -53,30 +60,27 @@ class Host(db.Model):
         self.chassis_temperature = chassis_temperature
         self.fan_status = fan_status
 
-        #service_state = db.relationship('Service', backref=db.backref('hosts', lazy=True))
 
-    def __repr__(self):
-        return self.name
 
     def add(self, data, category, erase):  # dodac obsluge bledu jak juz jest host dodany UNIQUE
         #try:
-        db.session.rollback()
+        session.rollback()
         if erase == ['erase']:
-            db.drop_all()
-        db.create_all()
+            Base.metadata.drop_all(engine)
+        Base.metadata.create_all(engine)
         for i in range(1, len(data[1])):
             host = Host(data[0][i], category, data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
                         data[7][i], data[8][i], data[9][i], data[10][i], data[11][i], data[12][i],
                         data[13][i], data[14][i], data[15][i])
-            db.session.add(host)
-        db.session.commit()
+            session.add(host)
+            session.commit()
        # except:
         #    return 1
 
-    def show_all(self):
+    def get_hosts(self):
         one_host = []
         database = []
-        hosts = self.query.all()
+        hosts = session.query(Host).all()
         for host in hosts:
             one_host.append(host.id)
             one_host.append(host.name)
@@ -102,11 +106,17 @@ class Host(db.Model):
         return database
 
 
-# class Service(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     uptime = db.Column(db.Boolean)
-#     ping = db.Column(db.Boolean)
-#     interface_status = db.Column(db.String(30))
-#     interface_utilization = db.Column(db.String(30))
-#     chassis_temperature = db.Column(db.Boolean)
-#     fan_status = db.Column(db.Boolean)
+class ServicesState(Base):
+    __tablename__ = 'services_state'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    host_id = Column(Integer)
+    date = Column(String(30))
+    uptime = Column(Boolean)
+    ping = Column(Boolean)
+    interface_status = Column(String(30))
+    interface_utilization = Column(String(30))
+    chassis_temperature = Column(Boolean)
+    fan_status = Column(Boolean)
+
+    #host_id = Column(Integer, ForeignKey('Host.id'))
+    #host = relationship("Host", back_populates="services_states")
