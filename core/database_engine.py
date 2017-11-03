@@ -10,6 +10,7 @@ class Database(Host, ServicesState):
         session.rollback()
         if erase == ['erase']:
             Base.metadata.drop_all(engine)
+            #Host.__table__.drop(engine)
         Base.metadata.create_all(engine)
         for i in range(1, len(data[1])):
             host = Host(data[0][i], category, data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
@@ -51,7 +52,7 @@ class Database(Host, ServicesState):
 
     def get_services_states(self):
         services = session.query(ServicesState).all()
-        print(services)
+        #print(services)
         return services
 
     # def add_services_state(self, data):
@@ -71,5 +72,5 @@ class Database(Host, ServicesState):
             one_check.append(check.date)
             one_check.append(check.services_states)
             database.append(one_check)
-            one_host = []
+            one_check = []
         return database

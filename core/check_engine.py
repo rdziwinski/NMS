@@ -43,15 +43,19 @@ class CheckEngine:
 
     def run(self, host):
         result = []
-        time = datetime.datetime.now().time()  # porpawic na date i godzine
         host_id = host[0]
-        date = str(time).split(".")[0]
+        date = datetime.datetime.now()
         services_states = self.check_service(host)
         result.append(host_id)
         result.append(date)
         result.append(services_states)
+        print("RESULT:")
+        print(result)
+        add_to_database = ServicesState(host_id=host_id, date=date, services_states=str(services_states))
+        #print(add_to_database.host_id)
+        #print(add_to_database.date)
+        #print(add_to_database.services_states)
 
-        add_to_database = ServicesState(host_id=host_id, date=date, services_states="dupa")
         session.rollback()
         session.add(add_to_database)
         session.commit()

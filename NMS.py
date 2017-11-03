@@ -45,14 +45,14 @@ def admin_hp():
 @app.route('/show_all', methods=['GET', 'POST'])
 def show_all():
     database = Database().get_hosts()
-    print(database)
+    #print(database)
     return render_template('show_all.html', name="Administrator", database=database)
 
 
 @app.route('/show_services', methods=['GET', 'POST'])
 def show_services():
     database = Database().show_services()
-    print(database)
+    #print(database)
     return render_template('show_services.html', name="Administrator", database=database)
 
 
@@ -62,7 +62,14 @@ def monitoring():
     hosts = Database().get_hosts()
     pool = ThreadPool(64)
     result = pool.map(engine.run, hosts)
+   # Base.metadata.drop_all(engine)
     return render_template('monitoring.html', name="Administrator", result=result)
+
+
+@app.route('/show_states_all', methods=['GET', 'POST'])
+def show_states_all():
+    database = "asd"
+    return render_template('show_states_all.html', name="Administrator", database=database)
 
 
 if __name__ == '__main__':

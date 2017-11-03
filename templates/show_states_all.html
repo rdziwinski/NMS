@@ -1,0 +1,102 @@
+{% extends "main_base.html" %}
+{% block title %}{{ name }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block show_all %}
+    <div class="row" style="margin-bottom: 1em">
+        <div class="col-md-3">
+            Name
+        </div>
+        <div class="col-md-4">
+            Description
+        </div>
+        <div class="col-md-5">
+            Services
+            <div class="row">
+                <div class="col-md-7">Name</div>
+                <div class="col-md-3">State</div>
+                <div class="col-md-2">Check time</div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 1em">
+        <div class="col-md-3" style="background-color: lightgreen">
+            Router ISP
+        </div>
+        <div class="col-md-4">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean posuere, ex vitae imperdiet ornare, libero lacus luctus tellus, et congue.
+        </div>
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-md-7" style="background-color: lightgreen">Interfaces Fa0/0</div>
+                <div class="col-md-3">Up</div>
+                <div class="col-md-2">13:45:54</div>
+            </div>
+            <div class="row">
+                <div class="col-md-7" style="background-color: red">Interfaces Fa0/1</div>
+                <div class="col-md-3">Down</div>
+                <div class="col-md-2">13:45:23</div>
+            </div>
+            <div class="row">
+                <div class="col-md-7">Uptime</div>
+                <div class="col-md-3">1:45:21</div>
+                <div class="col-md-2">13:41:23</div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 1em">
+        <div class="col-md-3" style="background-color: red">
+            Router zapasowy
+        </div>
+        <div class="col-md-4">
+            Lorem ipsum dolor sit amet.
+        </div>
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-md-7" style="background-color: red">Interfaces Fa0/0</div>
+                <div class="col-md-3">Down</div>
+                <div class="col-md-2">13:45:34</div>
+            </div>
+            <div class="row">
+                <div class="col-md-7" style="background-color: red">Interfaces Fa0/1</div>
+                <div class="col-md-3">Down</div>
+                <div class="col-md-2">13:45:03</div>
+            </div>
+            <div class="row">
+                <div class="col-md-7">Uptime</div>
+                <div class="col-md-3">0:00:00</div>
+                <div class="col-md-2">13:43:43</div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+{#<table class="table-striped">#}
+{#    <thead>#}
+{#        <tr>#}
+{#            <th>name</th>#}
+{#            <th>ipaddress</th>#}
+{#            <th>description</th>#}
+{#            <th>address</th>#}
+{#            <th>snmp_version</th>#}
+{#            <th>community</th>#}
+{#        </tr>#}
+{#    </thead>#}
+{#    <tbody>#}
+{#        {% for host in database %}#}
+{#            <tr>#}
+{#                {% for field in host %}#}
+{#                    <td>{{ field }}</td>#}
+{#                {% endfor %}#}
+{#            </tr>#}
+{#        {% endfor %}#}
+{#    </tbody>#}
+{#</table>#}
+{% endblock %}

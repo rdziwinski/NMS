@@ -1,12 +1,13 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
-
 Base = declarative_base()
 engine = create_engine('sqlite:////root/home/user/NMS/data/database.db', echo=True,
                        connect_args={'check_same_thread': False})
 
+# engine = create_engine('sqlite:///C:/Users/rdziw/Documents/Python/NMS/data/database_2.db', echo=True,
+#                        connect_args={'check_same_thread': False})
 
 class Host(Base):
     __tablename__ = 'hosts'
@@ -62,7 +63,7 @@ class ServicesState(Base):
     __tablename__ = 'services_state'
     id = Column(Integer, primary_key=True, autoincrement=True)
     host_id = Column(Integer)
-    date = Column(String(30))
+    date = Column(DateTime)
     services_states = Column(String(255))
 
     def __init__(self, host_id="", date="", services_states=""):
