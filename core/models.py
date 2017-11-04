@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 Base = declarative_base()
-engine = create_engine('sqlite:////root/home/user/NMS/data/database.db', echo=True,
+engine = create_engine('sqlite:////root/home/user/NMS/data/database.db', echo=False,
                        connect_args={'check_same_thread': False})
 
 # engine = create_engine('sqlite:///C:/Users/rdziw/Documents/Python/NMS/data/database_2.db', echo=True,
@@ -63,10 +63,21 @@ class ServicesState(Base):
     __tablename__ = 'services_state'
     id = Column(Integer, primary_key=True, autoincrement=True)
     host_id = Column(Integer)
-    date = Column(DateTime)
-    services_states = Column(String(255))
+    date = Column(DateTime) # tu ma byc datetime
+    uptime = Column(String(30))
+    ping = Column(String(30))
+    interface_status = Column(String(30))
+    interface_utilization = Column(String(30))
+    chassis_temperature = Column(String(30))
+    fan_status = Column(String(30))
 
-    def __init__(self, host_id="", date="", services_states=""):
+    def __init__(self, host_id="", date="", uptime="", ping="", interface_status="", interface_utilization="",
+                 chassis_temperature="", fan_status=""):
         self.host_id = host_id
         self.date = date
-        self.services_states = services_states
+        self.uptime = uptime
+        self.ping = ping
+        self.interface_status = interface_status
+        self.interface_utilization = interface_utilization
+        self.chassis_temperature = chassis_temperature
+        self.fan_status = fan_status

@@ -4,6 +4,7 @@
 {{ super() }}
 {% endblock %}
 {% block show_all %}
+    {{ database }}
     <div class="row" style="margin-bottom: 1em">
         <div class="col-md-3">
             Name
@@ -20,57 +21,60 @@
             </div>
         </div>
     </div>
-    <div class="row" style="margin-bottom: 1em">
-        <div class="col-md-3" style="background-color: lightgreen">
-            Router ISP
-        </div>
-        <div class="col-md-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean posuere, ex vitae imperdiet ornare, libero lacus luctus tellus, et congue.
-        </div>
-        <div class="col-md-5">
-            <div class="row">
-                <div class="col-md-7" style="background-color: lightgreen">Interfaces Fa0/0</div>
-                <div class="col-md-3">Up</div>
-                <div class="col-md-2">13:45:54</div>
-            </div>
-            <div class="row">
-                <div class="col-md-7" style="background-color: red">Interfaces Fa0/1</div>
-                <div class="col-md-3">Down</div>
-                <div class="col-md-2">13:45:23</div>
-            </div>
-            <div class="row">
-                <div class="col-md-7">Uptime</div>
-                <div class="col-md-3">1:45:21</div>
-                <div class="col-md-2">13:41:23</div>
-            </div>
-        </div>
-    </div>
-    <div class="row" style="margin-bottom: 1em">
-        <div class="col-md-3" style="background-color: red">
-            Router zapasowy
-        </div>
-        <div class="col-md-4">
-            Lorem ipsum dolor sit amet.
-        </div>
-        <div class="col-md-5">
-            <div class="row">
-                <div class="col-md-7" style="background-color: red">Interfaces Fa0/0</div>
-                <div class="col-md-3">Down</div>
-                <div class="col-md-2">13:45:34</div>
-            </div>
-            <div class="row">
-                <div class="col-md-7" style="background-color: red">Interfaces Fa0/1</div>
-                <div class="col-md-3">Down</div>
-                <div class="col-md-2">13:45:03</div>
-            </div>
-            <div class="row">
-                <div class="col-md-7">Uptime</div>
-                <div class="col-md-3">0:00:00</div>
-                <div class="col-md-2">13:43:43</div>
-            </div>
-        </div>
-    </div>
 
+
+
+    {% for host in database %}
+        <div class="row" style="margin-bottom: 1em">
+            <div class="col-md-3" style="background-color: lightgreen">
+                <a title="{{ host[2] }}" style="cursor:help">{{ host[1] }}</a>
+            </div>
+            <div class="col-md-4">
+                {{ host[3] }}
+            </div>
+            <div class="col-md-5">
+                {% for service in host[4] %}
+                    <div class="row">
+                    {{ service }}
+{#                        {% for key, value in service %}#}
+{#                           {{ key }}#}
+{#                        {% endfor %}#}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+
+
+
+
+{##}
+{#    <div class="row" style="margin-bottom: 1em">#}
+{#        <div class="col-md-3" style="background-color: red">#}
+{#            Router zapasowy#}
+{#        </div>#}
+{#        <div class="col-md-4">#}
+{#            Lorem ipsum dolor sit amet.#}
+{#        </div>#}
+{#        <div class="col-md-5">#}
+{#            <div class="row">#}
+{#                <div class="col-md-7" style="background-color: red">Interfaces Fa0/0</div>#}
+{#                <div class="col-md-3">Down</div>#}
+{#                <div class="col-md-2">13:45:34</div>#}
+{#            </div>#}
+{#            <div class="row">#}
+{#                <div class="col-md-7" style="background-color: red">Interfaces Fa0/1</div>#}
+{#                <div class="col-md-3">Down</div>#}
+{#                <div class="col-md-2">13:45:03</div>#}
+{#            </div>#}
+{#            <div class="row">#}
+{#                <div class="col-md-7">Uptime</div>#}
+{#                <div class="col-md-3">0:00:00</div>#}
+{#                <div class="col-md-2">13:43:43</div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{##}
 
 
 

@@ -15,9 +15,10 @@ class Database(Host, ServicesState):
         for i in range(1, len(data[1])):
             host = Host(data[0][i], category, data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
                         data[7][i], data[8][i], data[9][i], data[10][i], data[11][i], data[12][i],
-                        data[13][i], data[14][i], data[15][i])
+                        data[13][i], data[14][i], data[15][i], data[16][i])
             session.add(host)
             session.commit()
+            print(data)
             # except:
             #    return 1
 
@@ -70,7 +71,12 @@ class Database(Host, ServicesState):
             one_check.append(check.id)
             one_check.append(check.host_id)
             one_check.append(check.date)
-            one_check.append(check.services_states)
+            one_check.append(check.uptime)
+            one_check.append(check.ping)
+            one_check.append(check.interface_status)
+            one_check.append(check.interface_utilization)
+            one_check.append(check.chassis_temperature)
+            one_check.append(check.fan_status)
             database.append(one_check)
             one_check = []
         return database

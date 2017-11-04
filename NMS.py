@@ -6,7 +6,7 @@ from core.check_engine import CheckEngine
 from core.database_engine import *
 from core.import_host import ImportHost
 from core.upload_file import UploadFile
-
+from core.show_status import *
 app = Flask(__name__)
 
 
@@ -60,6 +60,7 @@ def show_services():
 def monitoring():
     engine = CheckEngine()
     hosts = Database().get_hosts()
+    print(hosts)
     pool = ThreadPool(64)
     result = pool.map(engine.run, hosts)
    # Base.metadata.drop_all(engine)
@@ -68,7 +69,8 @@ def monitoring():
 
 @app.route('/show_states_all', methods=['GET', 'POST'])
 def show_states_all():
-    database = "asd"
+    all_states = ShowStatus()
+    database = all_states.get_states()
     return render_template('show_states_all.html', name="Administrator", database=database)
 
 

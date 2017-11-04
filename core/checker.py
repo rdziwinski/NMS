@@ -7,11 +7,13 @@ from datetime import timedelta
 import re
 import os
 import time
+import subprocess
 import datetime as czas
 
 
 class Checker():
     def __init__(self, host):
+        self.ip_address = host[4]
         if host[5] == '2' or host[5] == '2c':
             self.session = Session(hostname=host[4], version=2, community=host[6])
         elif host[5] == '3':
@@ -20,6 +22,7 @@ class Checker():
                                    auth_password=host[12])
 
     def uptime(self):
+        result = ["Uptime"]
         snmp_get = self.session.get('1.3.6.1.2.1.1.3.0')
         hundredths_sec = int(snmp_get.value)
        # print(hundredths_sec)
@@ -28,38 +31,26 @@ class Checker():
         # hours = int((hundredths_sec / (100 * 60 * 60)) % 24)
         # result = "%02d:%02d:%02d" % (hours, min, sec)
         date = timedelta(microseconds=hundredths_sec*1e4)
-        result = str(date).split(".")[0]
+        uptime = str(date).split(".")[0]
+        result.append(uptime)
         return result
 
-    def ping(self, ipaddress):
-        # data = subprocess.check_output("ping " + str('192.168.202.1') + " -c 1")
-        data = os.popen("ping " + ipaddress + " -n 1").read()
-        time.sleep(1)
+    def ping(self):
+        data = os.popen("ping " + self.ip_address + " -c 1").read()
+        time.sleep(0.1)
         data = str(data)
-        #return data
-
-        # res = subprocess.call(['ping', '-c', '3', address])
-        # if res == 0:
-        #     print
-        #     "ping to", address, "OK"
-        # elif res == 2:
-        #     print
-        #     "no response from", address
-        # else:
-        #     print
-        #     "ping to", address, "failed!"
         if "ttl" in data:
-            result = re.findall('[0-9]+ms', data)
-            return result[-1]
-        else:
-            data = re.search('from [0-9.: ]+[A-z ]+', str(data)).group().replace("from ", "")
-            for_delete = re.search('[0-9.]+: ', data).group()
-            result = data.replace(for_delete, "")
+            result = data.split("/")
+            return result[-3]
+        elif "Destination Host Unreachable" in data:
+            result = "Destination Host Unreachable"
             return result
-       # except Exception as err:
-           # print("error")
-            # error = Statements()
-            # return error.get_statement(err)
+        elif "Name or service not known" in data:
+            result = "Name or service not known"
+            return result
+        else:
+            result = "Name or service not known"
+            return result
 
     def interface_select(self, interface):
         interfaces = []
@@ -182,6 +173,6 @@ class Checker():
         dictionary = dict(zip(fans, fans_status))
         return dictionary
 
-# spr = Checker(['1', 'Router V1', 'Routers', 'Opis', '192.168.202.1', '2', 'Password', 'Admin', 'authPriv', 'MD5', 'Password',
-#           'DES', 'Password', True, False, False, 'FastEthernet0/1,FastEthernet0/0', True, False])
-# print(spr.interface('FastEthernet0/1', 'utilization'))
+
+# ping = Checker(['asd','asdasd','asdasd','asdasd','wp.pl','asdasd','asdasd','asdasd','asdasd','asdasd'])
+# print(ping.ping())

@@ -5,12 +5,18 @@
 {% endblock %}
 {% block show_all %}
 <table class="table-striped">
+{{ database }}
     <thead>
         <tr>
             <th>id</th>
             <th>host_id</th>
             <th>date</th>
-            <th>service state</th>
+            <th>uptime</th>
+            <th>ping</th>
+            <th>int status</th>
+            <th>int utili</th>
+            <th>chasis temp</th>
+            <th>fan status</th>
         </tr>
     </thead>
     <tbody>

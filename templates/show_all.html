@@ -4,9 +4,11 @@
 {{ super() }}
 {% endblock %}
 {% block show_all %}
+    {{ database }}
 <table class="table-striped">
     <thead>
         <tr>
+            <th>id</th>
             <th>name</th>
             <th>category</th>
             <th>description</th>
