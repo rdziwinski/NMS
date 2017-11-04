@@ -24,12 +24,11 @@ class Host(Base):
     priv_key = Column(String(30))
     priv_protocol = Column(String(30))
     auth_key = Column(String(30))
-    uptime = Column(Boolean)
-    ping = Column(Boolean)
-    interface_status = Column(String(30))
-    interface_utilization = Column(String(30))
+    uptime = Column(String(30))
+    interface = Column(String(30))
     chassis_temperature = Column(Boolean)
     fan_status = Column(Boolean)
+    is_on = Column(Boolean)
 
     def __repr__(self):
         return "<User(name='%s', category='%s', description='%s')>" % (
@@ -37,8 +36,8 @@ class Host(Base):
 
     def __init__(self, name="",  category="", description="", address="", snmp_version="", community="", security_name="",
                  security_level="", auth_protocol="", priv_key="", priv_protocol="", auth_key="",
-                 uptime="", ping="", interface_status="", interface_utilization="", chassis_temperature="",
-                 fan_status=""):
+                 uptime="", interface="", chassis_temperature="",
+                 fan_status="", is_on=""):
         self.name = name
         self.category = category
         self.description = description
@@ -52,32 +51,28 @@ class Host(Base):
         self.priv_protocol = priv_protocol
         self.auth_key = auth_key
         self.uptime = uptime
-        self.ping = ping
-        self.interface_status = interface_status
-        self.interface_utilization = interface_utilization
+        self.interface = interface
         self.chassis_temperature = chassis_temperature
         self.fan_status = fan_status
+        self.is_on = is_on
 
 
 class ServicesState(Base):
     __tablename__ = 'services_state'
     id = Column(Integer, primary_key=True, autoincrement=True)
     host_id = Column(Integer)
-    date = Column(DateTime) # tu ma byc datetime
+    date = Column(DateTime)  # tu ma byc datetime
     uptime = Column(String(30))
     ping = Column(String(30))
-    interface_status = Column(String(30))
-    interface_utilization = Column(String(30))
+    interface = Column(String(30))
     chassis_temperature = Column(String(30))
     fan_status = Column(String(30))
 
-    def __init__(self, host_id="", date="", uptime="", ping="", interface_status="", interface_utilization="",
-                 chassis_temperature="", fan_status=""):
+    def __init__(self, host_id="", date="", ping="", uptime="", interface="", chassis_temperature="", fan_status=""):
         self.host_id = host_id
         self.date = date
-        self.uptime = uptime
         self.ping = ping
-        self.interface_status = interface_status
-        self.interface_utilization = interface_utilization
+        self.uptime = uptime
+        self.interface = interface
         self.chassis_temperature = chassis_temperature
         self.fan_status = fan_status

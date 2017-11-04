@@ -28,47 +28,59 @@ class ShowStatus():
             result.append(item[0])
         return result
 
-    def get_last_checks(self, id):
-        #last_check = session.query(ServicesState).filter_by(host_id=1).order_by(ServicesState.date.desc()).first().services_states
-        last_check_date = session.query(ServicesState).filter_by(host_id=id).order_by(ServicesState.date.desc()).first().date
-        return last_check_date
+    def get_host_id(self):
+        query = session.query(Host.id).filter_by(is_on=1)
+        result = []
+        for item in query:
+            result.append(item[0])
+        return result
 
     def get_states(self):
-
         services = []
         host_data = []
         host_data_raw = []
-        host_id = self.get_column(Host.id)
+        last_check_date = []
+        host_id = self.get_host_id()
         name = self.get_column(Host.name)
         address = self.get_column(Host.address)
         description = self.get_column(Host.description)
 
-        host_data_raw.extend((host_id, name, address, description))
+        for id in host_id:
+            date = session.query(ServicesState).filter_by(host_id=id).order_by(
+                ServicesState.date.desc()).first().date
+            last_check_date.append(date)
+        #print(name)
+        #print(last_check_date)
+        host_data_raw.extend((host_id, name, address, description, last_check_date))
         temp = list(zip(*host_data_raw))
         for item in temp:
             host_data.append(list(item))
 
         for id in host_data_raw[0]:
             temp_2 = []
-            uptime = session.query(ServicesState).filter_by(host_id=id).order_by(
-                ServicesState.date.desc()).first().uptime
             ping = session.query(ServicesState).filter_by(host_id=id).order_by(
                 ServicesState.date.desc()).first().ping
-            interface_status = session.query(ServicesState).filter_by(host_id=id).order_by(
-                ServicesState.date.desc()).first().interface_status
-            interface_utilization = session.query(ServicesState).filter_by(host_id=id).order_by(
-                ServicesState.date.desc()).first().interface_utilization
+            uptime = session.query(ServicesState).filter_by(host_id=id).order_by(
+                ServicesState.date.desc()).first().uptime
+            interface = session.query(ServicesState).filter_by(host_id=id).order_by(
+                ServicesState.date.desc()).first().interface
             chassis_temperature = session.query(ServicesState).filter_by(host_id=id).order_by(
                 ServicesState.date.desc()).first().chassis_temperature
             fan_status = session.query(ServicesState).filter_by(host_id=id).order_by(
                 ServicesState.date.desc()).first().fan_status
-            temp_2.extend((uptime, ping, interface_status, interface_utilization, chassis_temperature, fan_status))
-            services.append(temp_2)
+            print(list(fan_status))
 
+
+            temp_2.extend((uptime.split("|"), ping.split("|"), interface.split("|"),
+                           chassis_temperature.split("|"), fan_status.split("|")))
+            services.append(temp_2)
+            #print(temp_2)
         i = 0
         for item in services:
             host_data[i].append(item)
             i += 1
+
+        #print(host_data)
         return host_data
 
 # all_states = ShowStatus()

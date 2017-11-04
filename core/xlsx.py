@@ -30,7 +30,8 @@ class Xlsx():
         if self.result != []:
             first_row = []
             pattern = ['name', 'description', 'address', 'snmp_version', 'community', 'security_name',
-                       'security_level', 'auth_protocol', 'priv_key', 'priv_protocol', 'auth_key']
+                       'security_level', 'auth_protocol', 'priv_key', 'priv_protocol', 'auth_key',
+                       ]
             for i in range(self.max_col):
                 first_row.append(self.result[i][0])
             if first_row != pattern:

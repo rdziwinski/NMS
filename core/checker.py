@@ -22,7 +22,6 @@ class Checker():
                                    auth_password=host[12])
 
     def uptime(self):
-        result = ["Uptime"]
         snmp_get = self.session.get('1.3.6.1.2.1.1.3.0')
         hundredths_sec = int(snmp_get.value)
        # print(hundredths_sec)
@@ -32,7 +31,7 @@ class Checker():
         # result = "%02d:%02d:%02d" % (hours, min, sec)
         date = timedelta(microseconds=hundredths_sec*1e4)
         uptime = str(date).split(".")[0]
-        result.append(uptime)
+        result = "Uptime|" + uptime
         return result
 
     def ping(self):
@@ -40,17 +39,16 @@ class Checker():
         time.sleep(0.1)
         data = str(data)
         if "ttl" in data:
-            result = data.split("/")
-            return result[-3]
+            rtt = data.split("/")[-3]
+            result = 'RTT|' + rtt
+            #return "dupa"
+            return result
         elif "Destination Host Unreachable" in data:
-            result = "Destination Host Unreachable"
-            return result
-        elif "Name or service not known" in data:
-            result = "Name or service not known"
-            return result
+            unreachable = "Destination Host Unreachable"
+            return unreachable
         else:
-            result = "Name or service not known"
-            return result
+            not_know = "Name or service not known"
+            return not_know
 
     def interface_select(self, interface):
         interfaces = []
@@ -81,7 +79,8 @@ class Checker():
             7: "Lower layer down"
         }
         status = status.get(int(number), "error")
-        return status
+        result = "int," + status
+        return result
         #return_string = interface + ": " + status
         #return return_string
 
@@ -148,7 +147,8 @@ class Checker():
     def chassis_temperature(self):
         snmp_get = self.session.get('1.3.6.1.4.1.9.9.13.1.3.1.3.1')
         temperature = snmp_get.value + " °C"
-        return temperature
+        result = 'Chassis  temperature|' + temperature
+        return result
 
     def fan_status(self):
         fans = []
@@ -170,7 +170,8 @@ class Checker():
                 fans_status.append("Not present")
             elif item.value == '6':
                 fans_status.append("Not functioning")
-        dictionary = dict(zip(fans, fans_status))
+
+        dictionary = list(zip(fans, fans_status))
         return dictionary
 
 

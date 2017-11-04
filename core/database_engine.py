@@ -7,6 +7,7 @@ session = Session()
 class Database(Host, ServicesState):
     def add_host(self, data, category, erase):  # dodac obsluge bledu jak juz jest host dodany UNIQUE
         # try:
+        print(data)
         session.rollback()
         if erase == ['erase']:
             Base.metadata.drop_all(engine)
@@ -15,7 +16,7 @@ class Database(Host, ServicesState):
         for i in range(1, len(data[1])):
             host = Host(data[0][i], category, data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
                         data[7][i], data[8][i], data[9][i], data[10][i], data[11][i], data[12][i],
-                        data[13][i], data[14][i], data[15][i], data[16][i])
+                        data[13][i], data[14][i], data[15][i])
             session.add(host)
             session.commit()
             print(data)
@@ -42,11 +43,10 @@ class Database(Host, ServicesState):
             one_host.append(host.priv_protocol)
             one_host.append(host.auth_key)
             one_host.append(host.uptime)
-            one_host.append(host.ping)
-            one_host.append(host.interface_status)
-            one_host.append(host.interface_utilization)
+            one_host.append(host.interface)
             one_host.append(host.chassis_temperature)
             one_host.append(host.fan_status)
+            one_host.append(host.is_on)
             database.append(one_host)
             one_host = []
         return database
@@ -71,10 +71,9 @@ class Database(Host, ServicesState):
             one_check.append(check.id)
             one_check.append(check.host_id)
             one_check.append(check.date)
-            one_check.append(check.uptime)
             one_check.append(check.ping)
-            one_check.append(check.interface_status)
-            one_check.append(check.interface_utilization)
+            one_check.append(check.uptime)
+            one_check.append(check.interface)
             one_check.append(check.chassis_temperature)
             one_check.append(check.fan_status)
             database.append(one_check)

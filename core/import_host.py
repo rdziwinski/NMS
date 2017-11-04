@@ -7,7 +7,7 @@ class ImportHost(ImportFile):
         first_row = []
         pattern = ['name', 'description', 'address', 'snmp_version', 'community', 'security_name',
                    'security_level', 'auth_protocol', 'priv_key', 'priv_protocol', 'auth_key', 'uptime',
-                   'ping', 'interface_status', 'interface_utilization', 'chassis_temperature', 'fan_status']
+                   'interface', 'chassis_temperature', 'fan_status', 'is_on']
         for i in range(max_col):
             first_row.append(self.file_data[i][0])
         if first_row != pattern:  # If wrong return 1
