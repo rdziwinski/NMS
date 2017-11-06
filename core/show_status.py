@@ -1,5 +1,5 @@
 from core.database_engine import *
-
+import ast
 import json
 
 # def get_services_state():
@@ -23,7 +23,10 @@ import json
 
 
 class ShowStatus():
+
     def get_column(self, column):
+        session = scoped_session(session_factory)
+        session = session()
         query = session.query(column)
         result = []
         for item in query:
@@ -31,6 +34,8 @@ class ShowStatus():
         return result
 
     def get_host_id(self):
+        session = scoped_session(session_factory)
+        session = session()
         query = session.query(Host.id).filter_by(is_on=1)
         result = []
         for item in query:
@@ -38,6 +43,8 @@ class ShowStatus():
         return result
 
     def get_states(self):
+        session = scoped_session(session_factory)
+        session = session()
         services = []
         host_data = []
         host_data_raw = []
@@ -71,17 +78,25 @@ class ShowStatus():
             fan_status = session.query(ServicesState).filter_by(host_id=id).order_by(
                 ServicesState.date.desc()).first().fan_status
 
-            temp_2.extend((uptime.split("|"), ping.split("|"), interface.split("|"),
+            temp_json = interface.replace("'", '"')
+            #print(repr(temp_json))
+
+            if interface is not "":
+                print(id)
+                print(temp_json)
+                cos = json.loads(temp_json)
+                for key in cos:
+                    interfaces_list = {key: cos[key]}
+                    print(ppp)
+
+            temp_2.extend((uptime.split("|"), ping.split("|"), interface,
                            chassis_temperature.split("|"), fan_status))
             services.append(temp_2)
+            #print(temp_2)
 
-            chyba_json = temp_2[4]
-            print(chyba_json)
-            cos = chyba_json.replace("'", '"')
-            #print(cos)
-            n = json.loads(cos)
-            print(n["Fan 1"])
-            #o = json.loads(n)
+
+
+
             #print(n["attr1"])
             #print(n["attr1"])
             #chyba_json = json.dumps(chyba_json)

@@ -60,8 +60,8 @@ def show_services():
 def monitoring():
     engine = CheckEngine()
     hosts = Database().get_hosts()
-    print(hosts)
-    pool = ThreadPool(64)
+    #print(hosts)
+    pool = ThreadPool(32)
     result = pool.map(engine.run, hosts)
    # Base.metadata.drop_all(engine)
     return render_template('monitoring.html', name="Administrator", result=result)

@@ -1,10 +1,12 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 Base = declarative_base()
 engine = create_engine('sqlite:////root/home/user/NMS/data/database.db', echo=False,
                        connect_args={'check_same_thread': False})
+Base.metadata.create_all(engine)
+session_factory = sessionmaker(bind=engine, autocommit=False)
 
 # engine = create_engine('sqlite:///C:/Users/rdziw/Documents/Python/NMS/data/database_2.db', echo=True,
 #                        connect_args={'check_same_thread': False})
@@ -25,7 +27,7 @@ class Host(Base):
     priv_protocol = Column(String(30))
     auth_key = Column(String(30))
     uptime = Column(String(30))
-    interface = Column(String(30))
+    interface = Column(String(255))
     chassis_temperature = Column(Boolean)
     fan_status = Column(Boolean)
     is_on = Column(Boolean)
@@ -64,9 +66,9 @@ class ServicesState(Base):
     date = Column(DateTime)  # tu ma byc datetime
     uptime = Column(String(30))
     ping = Column(String(30))
-    interface = Column(String(30))
+    interface = Column(String(255))
     chassis_temperature = Column(String(30))
-    fan_status = Column(String(128))
+    fan_status = Column(String(255))
 
     def __init__(self, host_id="", date="", ping="", uptime="", interface="", chassis_temperature="", fan_status=""):
         self.host_id = host_id

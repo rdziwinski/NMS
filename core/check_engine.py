@@ -19,9 +19,12 @@ class CheckEngine:
             if any(str.isdigit(c) for c in ping_result):
                 self.check_snmp(host)
             else:
+                session = scoped_session(session_factory)
+                session = session()
                 add_to_database = ServicesState(host_id=host_id, date=date, ping=ping_result)
                 session.add(add_to_database)
                 session.commit()
+                session.rollback()
 
     def check_snmp(self, host):
         # session.rollback()
@@ -38,8 +41,8 @@ class CheckEngine:
             services_state.append(check.uptime())  # tymczasowe
         else:
             services_state.append("")  # towniez tymczasowe
-        if host[14] is not False or host[14] is not '0':
-            services_state.append(check.interface(host[14], 'status'))
+        if host[14] is not None:
+            services_state.append(check.interface(host[14]))
         else:
             services_state.append("")
         if host[15] is True or host[15] is '1':
@@ -50,14 +53,17 @@ class CheckEngine:
             services_state.append(check.fan_status())
         else:
             services_state.append("")
-        print("====")
-        print(services_state)
+        #print("====")
+        #print(services_state)
         add_to_database = ServicesState(host_id=host_id, date=date, ping=services_state[0],
                                         uptime=str(services_state[1]), interface=str(services_state[2]),
                                         chassis_temperature=services_state[3], fan_status=str(services_state[4]))
-
+        #print(str(services_state[2]))
+        session = scoped_session(session_factory)
+        session = session()
         session.add(add_to_database)
         session.commit()
+       # session.rollback()
 
 
 

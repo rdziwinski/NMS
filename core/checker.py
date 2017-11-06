@@ -4,7 +4,7 @@
 # Project files: /home/user/checker
 from easysnmp import Session
 from datetime import timedelta
-import re
+import ast
 import os
 import time
 import subprocess
@@ -32,6 +32,7 @@ class Checker():
         date = timedelta(microseconds=hundredths_sec*1e4)
         uptime = str(date).split(".")[0]
         result = "Uptime|" + uptime # dodawanie nazwy uslugi w czasie wyswietalania a nie teraz!!
+        result = {"Uptime": uptime}
         return result
 
     def ping(self):
@@ -41,7 +42,6 @@ class Checker():
         if "ttl" in data:
             rtt = data.split("/")[-3]
             result = 'RTT|' + rtt
-            #return "dupa"
             return result
         elif "Destination Host Unreachable" in data:
             unreachable = "Destination Host Unreachable"
@@ -66,31 +66,29 @@ class Checker():
 
         if if_index == 0:
             return "Interface not found"
-        oid = '1.3.6.1.2.1.2.2.1.8.' + str(if_index)
-        snmp_get = self.session.get(oid)
-        number = snmp_get.value
-        status = {
-            1: "Up",
-            2: "Down",
-            3: "Testing",
-            4: "Unknown",
-            5: "Dormant",
-            6: "Not present",
-            7: "Lower layer down"
-        }
-        status = status.get(int(number), "error")
-        result = "int," + status
-        return result
-        #return_string = interface + ": " + status
-        #return return_string
+        else:
+            oid = '1.3.6.1.2.1.2.2.1.8.' + str(if_index)
+            snmp_get = self.session.get(oid)
+            number = snmp_get.value
+            status = {
+                1: "Up",
+                2: "Down",
+                3: "Testing",
+                4: "Unknown",
+                5: "Dormant",
+                6: "Not present",
+                7: "Lower layer down"
+            }
+            status = status.get(int(number), "error")
+            return status
+            #return_string = interface + ": " + status
+            #return return_string
 
     def interface_utilization(self, interface, seconds=1):
         if_index = self.interface_select(interface)
 
         if if_index == 0:
             return "Interface not found"
-        # problem z dlugim (10s) czasem wykonywania, ale mozna podzielić na dwa i odpalać na początku i koncu
-        # a dokladna roznice czasu obliczac uzywajac uptime
 
         def run(direction):
             oid = " "
@@ -126,23 +124,40 @@ class Checker():
         input = round(run("input"), 2)
         output = round(run("output"), 2)
         #print(czas.datetime.now().time())
-        result = "Input: " + str(input) + " Mbps, Output: " + str(output) + " Mbps."
+        result = "Input " + str(input) + " Mbps. Output " + str(output) + " Mbps."
         return result
 
-    def interface(self, interface, what):
-        int_status = []
-        dictionary = {}
-        interface_list = interface.split(",")
-        if what == "status":
-            for int in interface_list:
-                int_status.append(self.interface_status(int))
-                dictionary = dict(zip(interface_list, int_status))
-            return dictionary
-        if what == "utilization":
-            for int in interface_list:
-                int_status.append(self.interface_utilization(int))
-                dictionary = dict(zip(interface_list, int_status))
-            return dictionary
+    def interface(self, interfaces):
+        interfaces_results = []
+        result = []
+        interface_list = interfaces.split(",")
+        for int in interface_list:
+            int_status = self.interface_status(int)
+            if int_status is not "Down":
+                int_utilization = self.interface_utilization(int)
+                interfaces_results.append(int_utilization)
+            else:
+                interfaces_results.append(int_status)
+        aaa = dict(zip(interface_list, interfaces_results))
+        print(aaa)
+        return aaa
+
+
+
+        # interfaces_status = []
+        # dictionary = {}
+        # interface_list = interfaces.split(",")
+        # for int in interface_list:
+        #     #print(int)
+        #     int_status = self.interface_status(int)
+        #    # if int_status is not "Up":
+        #        # print(int)
+        #        # print("duuuupa")
+        #
+        #     #interfaces_status.append()
+        #     #interfaces_status.append(self.interface_utilization(int))
+        #     #dictionary = dict(zip(interface_list, interfaces_status))
+        # return "cycki"
 
     def chassis_temperature(self):
         snmp_get = self.session.get('1.3.6.1.4.1.9.9.13.1.3.1.3.1')
@@ -171,10 +186,4 @@ class Checker():
             elif item.value == '6':
                 fans_status.append("Not functioning")
         dictionary = dict(zip(fans, fans_status))
-        print(dictionary)
-        # dictionary = {"attr1": 123, "attr2": 'something'}
         return dictionary
-
-
-# ping = Checker(['asd','asdasd','asdasd','asdasd','wp.pl','asdasd','asdasd','asdasd','asdasd','asdasd'])
-# print(ping.ping())

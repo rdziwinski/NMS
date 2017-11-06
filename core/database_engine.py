@@ -1,15 +1,12 @@
 from core.models import *
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
-session = Session()
-
 
 class Database(Host, ServicesState):
     def add_host(self, data, category, erase):  # dodac obsluge bledu jak juz jest host dodany UNIQUE
-        # try:
-        print(data)
+        session = scoped_session(session_factory)
+        session = session()
         session.rollback()
         if erase == ['erase']:
+            #print("tu bylo usuwanie")
             Base.metadata.drop_all(engine)
             #Host.__table__.drop(engine)
         Base.metadata.create_all(engine)
@@ -19,14 +16,17 @@ class Database(Host, ServicesState):
                         data[13][i], data[14][i], data[15][i])
             session.add(host)
             session.commit()
-            print(data)
+            session.rollback()
+            #print(data)
             # except:
             #    return 1
 
     def get_hosts(self):
-        session.rollback()
+        # session.rollback()
         one_host = []
         database = []
+        session = scoped_session(session_factory)
+        session = session()
         hosts = session.query(Host).all()
         for host in hosts:
             one_host.append(host.id)
@@ -66,6 +66,8 @@ class Database(Host, ServicesState):
     def show_services(self):
         one_check = []
         database = []
+        session = scoped_session(session_factory)
+        session = session()
         host_and_services = session.query(ServicesState).all()
         for check in host_and_services:
             one_check.append(check.id)
