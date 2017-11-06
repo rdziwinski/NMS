@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -66,7 +66,7 @@ class ServicesState(Base):
     ping = Column(String(30))
     interface = Column(String(30))
     chassis_temperature = Column(String(30))
-    fan_status = Column(String(30))
+    fan_status = Column(String(128))
 
     def __init__(self, host_id="", date="", ping="", uptime="", interface="", chassis_temperature="", fan_status=""):
         self.host_id = host_id

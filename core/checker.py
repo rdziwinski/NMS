@@ -9,7 +9,7 @@ import os
 import time
 import subprocess
 import datetime as czas
-
+import json
 
 class Checker():
     def __init__(self, host):
@@ -31,7 +31,7 @@ class Checker():
         # result = "%02d:%02d:%02d" % (hours, min, sec)
         date = timedelta(microseconds=hundredths_sec*1e4)
         uptime = str(date).split(".")[0]
-        result = "Uptime|" + uptime
+        result = "Uptime|" + uptime # dodawanie nazwy uslugi w czasie wyswietalania a nie teraz!!
         return result
 
     def ping(self):
@@ -170,8 +170,9 @@ class Checker():
                 fans_status.append("Not present")
             elif item.value == '6':
                 fans_status.append("Not functioning")
-
-        dictionary = list(zip(fans, fans_status))
+        dictionary = dict(zip(fans, fans_status))
+        print(dictionary)
+        # dictionary = {"attr1": 123, "attr2": 'something'}
         return dictionary
 
 

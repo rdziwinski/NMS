@@ -1,5 +1,7 @@
 from core.database_engine import *
 
+import json
+
 # def get_services_state():
 #     one_host = []
 #     database = []
@@ -68,13 +70,24 @@ class ShowStatus():
                 ServicesState.date.desc()).first().chassis_temperature
             fan_status = session.query(ServicesState).filter_by(host_id=id).order_by(
                 ServicesState.date.desc()).first().fan_status
-            print(list(fan_status))
-
 
             temp_2.extend((uptime.split("|"), ping.split("|"), interface.split("|"),
-                           chassis_temperature.split("|"), fan_status.split("|")))
+                           chassis_temperature.split("|"), fan_status))
             services.append(temp_2)
-            #print(temp_2)
+
+            chyba_json = temp_2[4]
+            print(chyba_json)
+            cos = chyba_json.replace("'", '"')
+            #print(cos)
+            n = json.loads(cos)
+            print(n["Fan 1"])
+            #o = json.loads(n)
+            #print(n["attr1"])
+            #print(n["attr1"])
+            #chyba_json = json.dumps(chyba_json)
+            #d = json.loads(chyba_json)
+            #print(d['key1'])
+
         i = 0
         for item in services:
             host_data[i].append(item)
