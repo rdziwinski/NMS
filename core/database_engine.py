@@ -52,6 +52,8 @@ class Database(Host, ServicesState):
         return database
 
     def get_services_states(self):
+        session = scoped_session(session_factory)
+        session = session()
         services = session.query(ServicesState).all()
         #print(services)
         return services

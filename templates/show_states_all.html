@@ -27,21 +27,23 @@
     {% for host in database %}
         <div class="row" style="margin-bottom: 1em">
             <div class="col-md-2">
-                <a title="{{ host[2] }}" style="cursor:help">{{ host[1] }}</a>
+                <a title="{{ host[1] }}" style="cursor:help">{{ host[0] }}</a>
             </div>
             <div class="col-md-3">
-                {{ host[3] }}
+                {{ host[2] }}
             </div>
             <div class="col-md-2">
-                {{ host[4] }}
+                {{ host[3].strftime('%d-%m-%Y %H:%M:%S ') }}
             </div>
             <div class="col-md-4">
-                {% for service in host[5] %}
+
+                {% for service in host[4] %}
+
                     <div class="row">
-                        <div class="col-md-6">{{ service[0] }}</div>
-                        <div class="col-md-6">{{ service[1] }}</div>
+                        <div class="col-md-6">{{ service[0] }} </div>
+                        <div class="col-md-6">{{ service[1] }} </div>
                     </div>
-                {% endfor %}
+                    {% endfor %}
             </div>
         </div>
     {% endfor %}
@@ -59,23 +61,20 @@
 {#        </div>#}
 {#        <div class="col-md-5">#}
 {#            <div class="row">#}
-{#                <div class="col-md-7" style="background-color: red">Interfaces Fa0/0</div>#}
-{#                <div class="col-md-3">Down</div>#}
-{#                <div class="col-md-2">13:45:34</div>#}
+{#                <div class="col-md-7" >Interfaces Fa0/0</div>#}
+{#                <div class="col-md-5">Down</div>#}
 {#            </div>#}
 {#            <div class="row">#}
-{#                <div class="col-md-7" style="background-color: red">Interfaces Fa0/1</div>#}
-{#                <div class="col-md-3">Down</div>#}
-{#                <div class="col-md-2">13:45:03</div>#}
+{#                <div class="col-md-7">Interfaces Fa0/1</div>#}
+{#                <div class="col-md-5">Down</div>#}
 {#            </div>#}
 {#            <div class="row">#}
 {#                <div class="col-md-7">Uptime</div>#}
-{#                <div class="col-md-3">0:00:00</div>#}
-{#                <div class="col-md-2">13:43:43</div>#}
+{#                <div class="col-md-5">0:00:00</div>#}
 {#            </div>#}
 {#        </div>#}
 {#    </div>#}
-{##}
+
 
 
 

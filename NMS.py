@@ -70,7 +70,7 @@ def monitoring():
 @app.route('/show_states_all', methods=['GET', 'POST'])
 def show_states_all():
     all_states = ShowStatus()
-    database = all_states.get_states()
+    database = all_states.run()
     return render_template('show_states_all.html', name="Administrator", database=database)
 
 

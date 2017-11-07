@@ -24,14 +24,14 @@ import json
 
 class ShowStatus():
 
-    def get_column(self, column):
-        session = scoped_session(session_factory)
-        session = session()
-        query = session.query(column)
-        result = []
-        for item in query:
-            result.append(item[0])
-        return result
+    # def get_column(self, column):
+    #     session = scoped_session(session_factory)
+    #     session = session()
+    #     query = session.query(column)
+    #     result = []
+    #     for item in query:
+    #         result.append(item[0])
+    #     return result
 
     def get_host_id(self):
         session = scoped_session(session_factory)
@@ -42,74 +42,146 @@ class ShowStatus():
             result.append(item[0])
         return result
 
-    def get_states(self):
+
+    def get_json(self, field):
+        result = []
+        if field is not "":
+            temp = str(field).replace("'", '"')
+            temp = json.loads(temp)
+            for key in temp:
+                result.append({key: temp[key]})
+        return result
+
+    def get_state(self, id):  # dla jednego!
         session = scoped_session(session_factory)
         session = session()
+
+        result = []
         services = []
-        host_data = []
-        host_data_raw = []
-        last_check_date = []
+
+        name = session.query(Host.name).filter_by(id=id).first()
+        address = session.query(Host.address).filter_by(id=id).first()
+        description = session.query(Host.description).filter_by(id=id).first()
+
+        date = session.query(ServicesState).filter_by(host_id=id).order_by(
+            ServicesState.date.desc()).first().date
+        ping = session.query(ServicesState).filter_by(host_id=id).order_by(
+            ServicesState.date.desc()).first().ping
+        uptime = session.query(ServicesState).filter_by(host_id=id).order_by(
+            ServicesState.date.desc()).first().uptime
+        interface = session.query(ServicesState).filter_by(host_id=id).order_by(
+            ServicesState.date.desc()).first().interface
+        chassis_temperature = session.query(ServicesState).filter_by(host_id=id).order_by(
+            ServicesState.date.desc()).first().chassis_temperature
+        fan_status = session.query(ServicesState).filter_by(host_id=id).order_by(
+            ServicesState.date.desc()).first().fan_status
+
+        if uptime is not "":
+            uptime = ["Uptime", uptime]
+        if ping is not "":
+            ping = ["ping", ping]
+        if chassis_temperature is not "":
+            chassis_temperature = ["chassis_temperature", chassis_temperature]
+
+        services.extend((ping, uptime))
+
+        if interface is not "":
+            temp = str(interface).replace("'", '"')
+            temp = json.loads(temp)
+            for key in sorted(temp):
+                services.append([key, temp[key]])
+
+        services.append((chassis_temperature))
+
+        if fan_status is not "":
+            temp = str(fan_status).replace("'", '"')
+            temp = json.loads(temp)
+            for key in sorted(temp):
+                services.append([key, temp[key]])
+
+
+        print(services)
+
+        result.extend((name[0], address[0], description[0], date))
+        result.append(services)
+        #print(result[4][1])
+        return result
+
+    def run(self):
+        database = []
         host_id = self.get_host_id()
-        name = self.get_column(Host.name)
-        address = self.get_column(Host.address)
-        description = self.get_column(Host.description)
-
         for id in host_id:
-            date = session.query(ServicesState).filter_by(host_id=id).order_by(
-                ServicesState.date.desc()).first().date
-            last_check_date.append(date)
-        #print(name)
-        #print(last_check_date)
-        host_data_raw.extend((host_id, name, address, description, last_check_date))
-        temp = list(zip(*host_data_raw))
-        for item in temp:
-            host_data.append(list(item))
-
-        for id in host_data_raw[0]:
-            temp_2 = []
-            ping = session.query(ServicesState).filter_by(host_id=id).order_by(
-                ServicesState.date.desc()).first().ping
-            uptime = session.query(ServicesState).filter_by(host_id=id).order_by(
-                ServicesState.date.desc()).first().uptime
-            interface = session.query(ServicesState).filter_by(host_id=id).order_by(
-                ServicesState.date.desc()).first().interface
-            chassis_temperature = session.query(ServicesState).filter_by(host_id=id).order_by(
-                ServicesState.date.desc()).first().chassis_temperature
-            fan_status = session.query(ServicesState).filter_by(host_id=id).order_by(
-                ServicesState.date.desc()).first().fan_status
-
-            temp_json = interface.replace("'", '"')
-            #print(repr(temp_json))
-
-            if interface is not "":
-                print(id)
-                print(temp_json)
-                cos = json.loads(temp_json)
-                for key in cos:
-                    interfaces_list = {key: cos[key]}
-                    print(ppp)
-
-            temp_2.extend((uptime.split("|"), ping.split("|"), interface,
-                           chassis_temperature.split("|"), fan_status))
-            services.append(temp_2)
-            #print(temp_2)
+            database.append(self.get_state(id))
+        return database
 
 
 
 
-            #print(n["attr1"])
-            #print(n["attr1"])
-            #chyba_json = json.dumps(chyba_json)
-            #d = json.loads(chyba_json)
-            #print(d['key1'])
 
-        i = 0
-        for item in services:
-            host_data[i].append(item)
-            i += 1
 
-        #print(host_data)
-        return host_data
+
+    # def get_states(self):
+    #     session = scoped_session(session_factory)
+    #     session = session()
+    #     services = []
+    #     host_data = []
+    #     host_data_raw = []
+    #     last_check_date = []
+    #     host_id = self.get_host_id()
+    #     name = self.get_column(Host.name)
+    #     address = self.get_column(Host.address)
+    #     description = self.get_column(Host.description)
+    #
+    #     for id in host_id:
+    #         date = session.query(ServicesState).filter_by(host_id=id).order_by(
+    #             ServicesState.date.desc()).first().date
+    #         last_check_date.append(date)
+    #     #print(name)
+    #     #print(last_check_date)
+    #     host_data_raw.extend((host_id, name, address, description, last_check_date))
+    #     temp = list(zip(*host_data_raw))
+    #     for item in temp:
+    #         host_data.append(list(item))
+    #
+    #     for id in host_data_raw[0]:
+    #         temp_2 = []
+    #         ping = session.query(ServicesState).filter_by(host_id=id).order_by(
+    #             ServicesState.date.desc()).first().ping
+    #         uptime = session.query(ServicesState).filter_by(host_id=id).order_by(
+    #             ServicesState.date.desc()).first().uptime
+    #         interface = session.query(ServicesState).filter_by(host_id=id).order_by(
+    #             ServicesState.date.desc()).first().interface
+    #         chassis_temperature = session.query(ServicesState).filter_by(host_id=id).order_by(
+    #             ServicesState.date.desc()).first().chassis_temperature
+    #         fan_status = session.query(ServicesState).filter_by(host_id=id).order_by(
+    #             ServicesState.date.desc()).first().fan_status
+    #
+    #
+    #         #temp_json = interface.replace("'", '"')
+    #         #print(repr(temp_json))
+    #
+    #
+    #         temp_2.extend((uptime.split("|"), ping.split("|"), interface,
+    #                        chassis_temperature.split("|"), fan_status))
+    #         services.append(temp_2)
+    #         #print(temp_2)
+    #
+    #
+    #
+    #
+    #         #print(n["attr1"])
+    #         #print(n["attr1"])
+    #         #chyba_json = json.dumps(chyba_json)
+    #         #d = json.loads(chyba_json)
+    #         #print(d['key1'])
+    #
+    #     i = 0
+    #     for item in services:
+    #         host_data[i].append(item)
+    #         i += 1
+    #
+    #     #print(host_data)
+    #     return host_data
 
 # all_states = ShowStatus()
 # database = all_states.get_states()

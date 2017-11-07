@@ -21,7 +21,7 @@ class CheckEngine:
             else:
                 session = scoped_session(session_factory)
                 session = session()
-                add_to_database = ServicesState(host_id=host_id, date=date, ping=ping_result)
+                add_to_database = ServicesState(host_id=host_id, date=date, ping=str(ping_result))
                 session.add(add_to_database)
                 session.commit()
                 session.rollback()
@@ -55,9 +55,9 @@ class CheckEngine:
             services_state.append("")
         #print("====")
         #print(services_state)
-        add_to_database = ServicesState(host_id=host_id, date=date, ping=services_state[0],
+        add_to_database = ServicesState(host_id=host_id, date=date, ping=str(services_state[0]),
                                         uptime=str(services_state[1]), interface=str(services_state[2]),
-                                        chassis_temperature=services_state[3], fan_status=str(services_state[4]))
+                                        chassis_temperature=str(services_state[3]), fan_status=str(services_state[4]))
         #print(str(services_state[2]))
         session = scoped_session(session_factory)
         session = session()

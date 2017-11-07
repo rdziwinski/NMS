@@ -31,9 +31,8 @@ class Checker():
         # result = "%02d:%02d:%02d" % (hours, min, sec)
         date = timedelta(microseconds=hundredths_sec*1e4)
         uptime = str(date).split(".")[0]
-        result = "Uptime|" + uptime # dodawanie nazwy uslugi w czasie wyswietalania a nie teraz!!
-        result = {"Uptime": uptime}
-        return result
+        # result = {"Uptime": uptime}
+        return uptime
 
     def ping(self):
         data = os.popen("ping " + self.ip_address + " -c 1").read()
@@ -41,8 +40,8 @@ class Checker():
         data = str(data)
         if "ttl" in data:
             rtt = data.split("/")[-3]
-            result = 'RTT|' + rtt
-            return result
+            # result = {"RTT": rtt}
+            return rtt
         elif "Destination Host Unreachable" in data:
             unreachable = "Destination Host Unreachable"
             return unreachable
@@ -162,8 +161,8 @@ class Checker():
     def chassis_temperature(self):
         snmp_get = self.session.get('1.3.6.1.4.1.9.9.13.1.3.1.3.1')
         temperature = snmp_get.value + " °C"
-        result = 'Chassis  temperature|' + temperature
-        return result
+        # result = {"Chassis  temperatur": temperature}
+        return temperature
 
     def fan_status(self):
         fans = []
