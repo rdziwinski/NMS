@@ -63,6 +63,9 @@ class ShowStatus():
         address = session.query(Host.address).filter_by(id=id).first()
         description = session.query(Host.description).filter_by(id=id).first()
 
+        if session.query(ServicesState).first() is None:
+            return 0
+
         date = session.query(ServicesState).filter_by(host_id=id).order_by(
             ServicesState.date.desc()).first().date
         ping = session.query(ServicesState).filter_by(host_id=id).order_by(
@@ -77,21 +80,34 @@ class ShowStatus():
             ServicesState.date.desc()).first().fan_status
 
         if uptime is not "":
-            uptime = ["Uptime", uptime]
+            # uptime = ["Uptime", uptime]
+            service_name = ["Uptime"]
+            data = uptime.split("|")
+            uptime = service_name + data
         if ping is not "":
-            ping = ["ping", ping]
+            service_name = ["RTT"]
+            data = ping.split("|")
+            ping = service_name + data
         if chassis_temperature is not "":
             chassis_temperature = ["chassis_temperature", chassis_temperature]
 
-        services.extend((ping, uptime))
+        if ping is not "":
+            services.append((ping))
+
+        if uptime is not "":
+            services.append((uptime))
 
         if interface is not "":
             temp = str(interface).replace("'", '"')
             temp = json.loads(temp)
             for key in sorted(temp):
-                services.append([key, temp[key]])
+                temp2 = temp[key].split("|")
+                print(temp2)
+                services.append([key, temp2[0], temp2[1]])
+                #services.append([key, temp[key].split("|")])
 
-        services.append((chassis_temperature))
+        if chassis_temperature is not "":
+            services.append((chassis_temperature))
 
         if fan_status is not "":
             temp = str(fan_status).replace("'", '"')
@@ -100,7 +116,7 @@ class ShowStatus():
                 services.append([key, temp[key]])
 
 
-        print(services)
+        #print(services)
 
         result.extend((name[0], address[0], description[0], date))
         result.append(services)
@@ -112,6 +128,7 @@ class ShowStatus():
         host_id = self.get_host_id()
         for id in host_id:
             database.append(self.get_state(id))
+        #print(database)
         return database
 
 

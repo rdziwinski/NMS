@@ -4,39 +4,61 @@
     {% block head %}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet" href="../static/style.css"/>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+{#        <link rel="stylesheet" href="../static/style.css"/>#}
+        <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="../static/bootstrap/css/bootstrap-grid.css">
         <title>NMS - {% block title %}{% endblock %}</title>
     {% endblock %}
 </head>
 <body>
 <div class="container-fluid">
-    <div class="header row">
-        <div class="col">
-            <h1 class="center h3 text-center">{{ config['Name'] }} <small class="text-muted"> {{ name }} </small></h1>
-        </div>
+    <div class="row" >
+        <nav class="navbar navbar-expand-md navbar-light bg-light">
+            <a class="navbar-brand" href="/show_states_all">
+                <img src="../static/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+                NMS - Network Monitoring Software
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item {% if  request.endpoint == "show_states_all" %}active{% endif %}">
+                        <a class="nav-link" href="/show_states_all">Home</a>
+                    </li>
+                    <li class="nav-item {% if  request.endpoint == "monitoring" %}active{% endif %}">
+                        <a class="nav-link" href="/monitoring">Run</a>
+                    </li>
+                    <li class="nav-item {% if  request.endpoint == "administrator" %}active{% endif %}">
+                        <a class="nav-link" href="/administrator">Import</a>
+                    </li>
+                    <li class="nav-item {% if  request.endpoint == "#" %}active{% endif %}">
+                        <a class="nav-link" href="#">Settings</a>
+                    </li>
+                    <li class="nav-item {% if  request.endpoint == "show_all" %}active{% endif %}">
+                        <a class="nav-link" href="/show_all">Hosts</a>
+                    </li>
+                    <li class="nav-item {% if  request.endpoint == "show_services" %}active{% endif %}">
+                        <a class="nav-link" href="/show_services">Checks</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
     </div>
     <div class="row">
-        <a href="/monitoring">Monitoring</a>--
-        <a href="/administrator">Administrator</a>--
-        <a href="/show_all">Show All</a>--
-        <a href="/show_services">Show servces</a>--
-        <a href="/show_states_all">Show states all</a>
-    </div>
-    <div class="row">
-        <div class="col-xl-1">
-            {% block upload_file %}{% endblock %}
-        </div>
-        <div class="col-xl-11">
-            {% block show_all %}{% endblock %}
-            {% block show_monitoring %}{% endblock %}
-        </div>
-    </div>
-    <div class="footer row">
-        <div class="col">
-            &copy; Copyright 2016 by Rafał Dziwiński.
-        </div>
+        {% block upload_file %}{% endblock %}
+        {% block show_all %}{% endblock %}
+        {% block show_monitoring %}{% endblock %}
+        {% block show_states_all %}{% endblock %}
     </div>
 </div>
+<div class=" row">
+    <div class="col text-right">
+        &copy; Copyright 2017 by Rafał Dziwiński.
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 </body>
 </html>

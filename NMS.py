@@ -46,14 +46,14 @@ def admin_hp():
 def show_all():
     database = Database().get_hosts()
     #print(database)
-    return render_template('show_all.html', name="Administrator", database=database)
+    return render_template('show_all.html', name="Hosts", database=database)
 
 
 @app.route('/show_services', methods=['GET', 'POST'])
 def show_services():
     database = Database().show_services()
     #print(database)
-    return render_template('show_services.html', name="Administrator", database=database)
+    return render_template('show_services.html', name="Checks", database=database)
 
 
 @app.route('/monitoring', methods=['GET', 'POST'])
@@ -64,14 +64,17 @@ def monitoring():
     pool = ThreadPool(32)
     result = pool.map(engine.run, hosts)
    # Base.metadata.drop_all(engine)
-    return render_template('monitoring.html', name="Administrator", result=result)
+    return render_template('monitoring.html', name="Run")
 
 
 @app.route('/show_states_all', methods=['GET', 'POST'])
 def show_states_all():
     all_states = ShowStatus()
     database = all_states.run()
-    return render_template('show_states_all.html', name="Administrator", database=database)
+    if database[0] == 0:
+        return render_template('show_services.html', name="Home")
+
+    return render_template('show_states_all.html', name="Home", database=database)
 
 
 if __name__ == '__main__':

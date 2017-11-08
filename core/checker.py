@@ -21,7 +21,8 @@ class Checker():
                                    privacy_protocol=host[9], privacy_password=host[10], auth_protocol=host[11],
                                    auth_password=host[12])
 
-    def uptime(self):
+    def uptime(self):  # 0 - OK, 1 - warn, 2 - Crit
+        stan = "0"
         snmp_get = self.session.get('1.3.6.1.2.1.1.3.0')
         hundredths_sec = int(snmp_get.value)
        # print(hundredths_sec)
@@ -31,22 +32,30 @@ class Checker():
         # result = "%02d:%02d:%02d" % (hours, min, sec)
         date = timedelta(microseconds=hundredths_sec*1e4)
         uptime = str(date).split(".")[0]
-        # result = {"Uptime": uptime}
-        return uptime
+        #result = {"Uptime": uptime}
+        if hundredths_sec < 600*1e2:
+            stan = '2'
+        result = uptime + "|" + stan
+        return result
 
     def ping(self):
+        stan = "0"
         data = os.popen("ping " + self.ip_address + " -c 1").read()
         time.sleep(0.1)
         data = str(data)
         if "ttl" in data:
             rtt = data.split("/")[-3]
-            # result = {"RTT": rtt}
-            return rtt
+            if float(rtt) > 3:
+                stan = '2'
+            elif float(rtt) > 2:
+                stan = '1'
+            result = rtt + "|" + stan
+            return result
         elif "Destination Host Unreachable" in data:
-            unreachable = "Destination Host Unreachable"
+            unreachable = "Destination Host Unreachable" + "|2"
             return unreachable
         else:
-            not_know = "Name or service not known"
+            not_know = "Name or service not known" + "|1"
             return not_know
 
     def interface_select(self, interface):
@@ -87,7 +96,15 @@ class Checker():
         if_index = self.interface_select(interface)
 
         if if_index == 0:
-            return "Interface not found"
+            return "Interface not found|1"
+
+        def get_if_speed():
+            oid = '1.3.6.1.2.1.2.2.1.5.' + str(if_index)
+
+            snmp_get = self.session.get(oid)
+            if_speed = snmp_get.value
+            return if_speed
+
 
         def run(direction):
             oid = " "
@@ -108,11 +125,7 @@ class Checker():
             snmp_get = self.session.get(oid)
             if_in_octets_stop = snmp_get.value
             delta_if_in_octets = int(if_in_octets_stop) - int(if_in_octets_start)
-
-            oid = '1.3.6.1.2.1.2.2.1.5.' + str(if_index)
-
-            snmp_get = self.session.get(oid)
-            if_speed = snmp_get.value
+            if_speed = get_if_speed()
 
             utilization = (delta_if_in_octets*8*100)/(time_delta*int(if_speed))
             # print(if_in_octets_start)
@@ -120,11 +133,18 @@ class Checker():
             # print(delta_if_in_octets)
             return utilization
 
+        stan = "0"
         input = round(run("input"), 2)
         output = round(run("output"), 2)
-        #print(czas.datetime.now().time())
-        result = "Input " + str(input) + " Mbps. Output " + str(output) + " Mbps."
-        return result
+        mbits = int(get_if_speed())/1e6
+        input_percent = input/mbits
+        output_percent = output/mbits
+        if (input_percent or output_percent) > 30:
+            stan = "1"
+        elif (input_percent or output_percent) > 50:
+            stan = "2"
+        result = "Input " + str(input_percent) + " % Output " + str(output_percent) + " %|"
+        return result + stan
 
     def interface(self, interfaces):
         interfaces_results = []

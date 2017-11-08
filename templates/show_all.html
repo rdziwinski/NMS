@@ -4,28 +4,27 @@
 {{ super() }}
 {% endblock %}
 {% block show_all %}
-    {{ database }}
-<table class="table-striped">
+<table class="table">
     <thead>
         <tr>
-            <th>id</th>
-            <th>name</th>
-            <th>category</th>
-            <th>description</th>
-            <th>address</th>
-            <th>snmp_version</th>
-            <th>community</th>
-            <th>security_name</th>
-            <th>security_level</th>
-            <th>auth_protocol</th>
-            <th>priv_key</th>
-            <th>priv_protocol</th>
-            <th>auth_key</th>
-            <th>uptime</th>
-            <th>interfaces</th>
-            <th>chassis_temperature</th>
-            <th>fan_status</th>
-            <th>is_on</th>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Description</th>
+            <th scope="col">IP address</th>
+            <th scope="col">SNMP version</th>
+            <th scope="col">Community</th>
+            <th scope="col">Security name</th>
+            <th scope="col">Security level</th>
+            <th scope="col">Auth protocol</th>
+            <th scope="col">Priv key</th>
+            <th scope="col">Priv protocol</th>
+            <th scope="col">Auth key</th>
+            <th scope="col">Uptime</th>
+            <th scope="col">Interfaces</th>
+            <th scope="col">Chassis temperature</th>
+            <th scope="col">Fan status</th>
+            <th scope="col">On/Off</th>
         </tr>
     </thead>
     <tbody>

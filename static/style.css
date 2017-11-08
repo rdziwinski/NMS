@@ -18,13 +18,6 @@
 
 }
 
-.container-fluid > .footer {
-    background-color: aqua;
-}
-
-.container-fluid > .header {
-    background-color: red;
-}
 
 /* Extra large devices (large desktops) */
 /* No media query since the extra-large breakpoint has no upper bound on its width */
