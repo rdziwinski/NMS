@@ -10,7 +10,17 @@ from core.show_status import *
 app = Flask(__name__)
 
 
-@app.route('/administrator', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
+def show_states_all():
+    all_states = ShowStatus()
+    database = all_states.run(1)
+    if database[0] == 0:
+        return render_template('show_services.html', name="Home")
+
+    return render_template('show_states_all.html', name="Home", database=database)
+
+
+@app.route('/settings', methods=['GET', 'POST'])
 def admin_hp():
     error = ""
     success = ""
@@ -22,13 +32,13 @@ def admin_hp():
         file_name = upload_file.print_file_name()
 
         if file_name == "":
-            return render_template('upload_file.html', name="Administrator")
+            return render_template('settings.html', name="Administrator")
 
         erase = request.form.getlist('erase')
         import_category = ImportHost(file_name, category)
         if import_category.open_file() == 1:
             error = import_category.print_errors()
-            return render_template('upload_file.html', name="Administrator", error=error)
+            return render_template('settings.html', name="Administrator", error=error)
         import_category.read_file()
         if import_category.is_valid():
             error = "Wrong inside file format"
@@ -37,9 +47,9 @@ def admin_hp():
         else:
             if Database().add_host(import_category.print_file(), category, erase) == 1:
                 error = 'Add to database failed.'
-                return render_template('upload_file.html', name="Administrator", error=error)
+                return render_template('settings.html', name="Administrator", error=error)
             success = "Import host successful"
-    return render_template('upload_file.html', name="Administrator", error=error, success=success)
+    return render_template('settings.html', name="Administrator", error=error, success=success)
 
 
 @app.route('/show_all', methods=['GET', 'POST'])
@@ -66,15 +76,16 @@ def monitoring():
    # Base.metadata.drop_all(engine)
     return render_template('monitoring.html', name="Run")
 
-
-@app.route('/show_states_all', methods=['GET', 'POST'])
-def show_states_all():
+@app.route('/show_states_problems', methods=['GET', 'POST'])
+def show_states_problems():
     all_states = ShowStatus()
-    database = all_states.run()
+    database = all_states.run(0)
     if database[0] == 0:
         return render_template('show_services.html', name="Home")
 
     return render_template('show_states_all.html', name="Home", database=database)
+
+
 
 
 if __name__ == '__main__':

@@ -15,13 +15,13 @@ class CheckEngine:
             check = Checker(host)
             host_id = host[0]
             date = datetime.datetime.now()
-            ping_result = check.ping().split("|")
-            if ping_result[1] == '0':
+            ping_result = check.ping()
+            if ping_result.split("|")[1] != '2':
                 self.check_snmp(host)
             else:
                 session = scoped_session(session_factory)
                 session = session()
-                add_to_database = ServicesState(host_id=host_id, date=date, ping=str(ping_result[0]))
+                add_to_database = ServicesState(host_id=host_id, date=date, ping=str(ping_result))
                 session.add(add_to_database)
                 session.commit()
                 session.rollback()

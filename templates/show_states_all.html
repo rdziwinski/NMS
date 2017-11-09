@@ -4,6 +4,7 @@
 {{ super() }}
 {% endblock %}
 {% block show_states_all %}
+{#    Spróbować zamiast tabeli dać div z col- a usługi w środku w tabeli tylko#}
     <table class="table" style="display: table">
         <thead>
             <tr>
@@ -14,37 +15,46 @@
                 <th>Service state</th>
             </tr>
             {% for host in database %}
-                {% if host[4][0][1] == "Destination Host Unreachable" or host[4][0][1] == "Name or service not known" %}
-                    <tr class="text-danger">
-                {% else %}
-                    <tr>
+                {% if host[4] %}
+                    {% if host[4][0][1] == "Destination Host Unreachable" or host[4][0][1] == "Name or service not known" %}
+                        <tr class="text-danger">
+                    {% else %}
+                        <tr>
+                    {% endif %}
+                        <td>{{ host[1] }}</td>
+                        <td>{{ host[2] }}</td>
+                        <td>{{ host[3].strftime('%d-%m-%Y %H:%M:%S ') }}</td>
+                        <td>
+                            <ul class="list-unstyled">
+                                {% for service in host[4] %}
+                                    {% if service[2] == '2' %}
+                                        <li class="text-danger">
+                                    {% elif service[2] == '1' %}
+                                        <li class="text-warning">
+                                    {% else %}
+                                        <li style="display: block">
+                                    {% endif %}
+                                        {{ service[0] }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul class="list-unstyled">
+                                {% for service in host[4] %}
+                                    {% if service[2] == '2' %}
+                                        <li class="text-danger">
+                                    {% elif service[2] == '1' %}
+                                        <li class="text-warning">
+                                    {% else %}
+                                        <li style="display: block">
+                                    {% endif %}
+                                            {{ service[1] }}
+                                        </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
                 {% endif %}
-                    <td>{{ host[1] }}</td>
-                    <td>{{ host[2] }}</td>
-                    <td>{{ host[3].strftime('%d-%m-%Y %H:%M:%S ') }}</td>
-                    <td>
-                        <ul class="list-unstyled">
-                            {% for service in host[4] %}
-                                <li>{{ service[0] }}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td>
-                        <ul class="list-unstyled">
-                            {% for service in host[4] %}
-                                {% if service[2] == '2' %}
-                                    <li class="text-danger">
-                                {% elif service[2] == '1' %}
-                                    <li class="text-warning">
-                                {% else %}
-                                    <li>
-                                {% endif %}
-                                        {{ service[1] }}
-                                    </li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
             {% endfor %}
         </thead>
     </table>

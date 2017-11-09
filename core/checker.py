@@ -45,9 +45,7 @@ class Checker():
         data = str(data)
         if "ttl" in data:
             rtt = data.split("/")[-3]
-            if float(rtt) > 3:
-                stan = '2'
-            elif float(rtt) > 2:
+            if float(rtt) > 1.2:
                 stan = '1'
             result = rtt + "|" + stan
             return result
@@ -148,7 +146,6 @@ class Checker():
 
     def interface(self, interfaces):
         interfaces_results = []
-        result = []
         interface_list = interfaces.split(",")
         for int in interface_list:
             int_status = self.interface_status(int)
@@ -157,9 +154,8 @@ class Checker():
                 interfaces_results.append(int_utilization)
             else:
                 interfaces_results.append(int_status)
-        aaa = dict(zip(interface_list, interfaces_results))
-        print(aaa)
-        return aaa
+        result = dict(zip(interface_list, interfaces_results))
+        return result
 
 
 
@@ -179,8 +175,13 @@ class Checker():
         # return "cycki"
 
     def chassis_temperature(self):
+        stan = '0'
         snmp_get = self.session.get('1.3.6.1.4.1.9.9.13.1.3.1.3.1')
-        temperature = snmp_get.value + " °C"
+        if int(snmp_get.value) > 20:
+            stan = '1'
+        elif int(snmp_get.value) > 30:
+            stan = '2'
+        temperature = snmp_get.value + " °C|" + stan
         # result = {"Chassis  temperatur": temperature}
         return temperature
 
@@ -193,16 +194,16 @@ class Checker():
         items = self.session.walk('1.3.6.1.4.1.9.9.13.1.4.1.3')
         for item in items:
             if item.value == '1':
-                fans_status.append("Normal")
+                fans_status.append("Normal|0")
             elif item.value == '2':
-                fans_status.append("Warning")
+                fans_status.append("Warning|1")
             elif item.value == '3':
-                fans_status.append("Critical")
+                fans_status.append("Critical|2")
             elif item.value == '4':
-                fans_status.append("Shutdown")
+                fans_status.append("Shutdown|2")
             elif item.value == '5':
-                fans_status.append("Not present")
+                fans_status.append("Not present|1")
             elif item.value == '6':
-                fans_status.append("Not functioning")
+                fans_status.append("Not functioning|1")
         dictionary = dict(zip(fans, fans_status))
         return dictionary

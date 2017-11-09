@@ -1,5 +1,5 @@
 from core.models import *
-
+from sqlalchemy import desc
 class Database(Host, ServicesState):
     def add_host(self, data, category, erase):  # dodac obsluge bledu jak juz jest host dodany UNIQUE
         session = scoped_session(session_factory)
@@ -70,7 +70,7 @@ class Database(Host, ServicesState):
         database = []
         session = scoped_session(session_factory)
         session = session()
-        host_and_services = session.query(ServicesState).all()
+        host_and_services = session.query(ServicesState).order_by(desc(ServicesState.id)).all()
         for check in host_and_services:
             one_check.append(check.id)
             one_check.append(check.host_id)

@@ -1,7 +1,7 @@
 from core.database_engine import *
 import ast
 import json
-
+import datetime
 # def get_services_state():
 #     one_host = []
 #     database = []
@@ -42,7 +42,6 @@ class ShowStatus():
             result.append(item[0])
         return result
 
-
     def get_json(self, field):
         result = []
         if field is not "":
@@ -52,7 +51,23 @@ class ShowStatus():
                 result.append({key: temp[key]})
         return result
 
-    def get_state(self, id):  # dla jednego!
+    def append_service(self, service_name, service, type):  # bedzie zwracac to co potem trzeba services.append
+        if service is not "":
+            if type == 'list':
+                data = service.split("|")
+                result = [service_name] + data
+                return result
+            elif type == 'dict':
+                result = []
+                temp = str(service).replace("'", '"')
+                temp = json.loads(temp)
+                for key in sorted(temp):
+                    temp2 = temp[key].split("|")
+                    result.append([key, temp2[0], temp2[1]])
+                return result
+
+
+    def get_state(self, id, all=1):  # dla jednego!
         session = scoped_session(session_factory)
         session = session()
 
@@ -79,63 +94,84 @@ class ShowStatus():
         fan_status = session.query(ServicesState).filter_by(host_id=id).order_by(
             ServicesState.date.desc()).first().fan_status
 
-        if uptime is not "":
-            # uptime = ["Uptime", uptime]
-            service_name = ["Uptime"]
-            data = uptime.split("|")
-            uptime = service_name + data
-        if ping is not "":
-            service_name = ["RTT"]
-            data = ping.split("|")
-            ping = service_name + data
-        if chassis_temperature is not "":
-            chassis_temperature = ["chassis_temperature", chassis_temperature]
+        uptime = self.append_service("Uptime", uptime, "list")
+        ping = self.append_service("RTT", ping, "list")
+        chassis_temperature = self.append_service("chassis_temperature", chassis_temperature, "list")
+        interface = self.append_service("", interface, "dict")
+        fan_status = self.append_service("", fan_status, "dict")
 
-        if ping is not "":
+        if interface:
+            services.extend(interface)
+
+        if fan_status:
+            services.extend(fan_status)
+
+        # if interface is not "":
+        #     temp = str(interface).replace("'", '"')
+        #     temp = json.loads(temp)
+        #     print(temp)
+        #     for key in sorted(temp):
+        #         temp2 = temp[key].split("|")
+        #         print(temp[key])
+        #         services.append([key, temp2[0], temp2[1]])
+
+
+
+        # if uptime is not "":
+        #     # uptime = ["Uptime", uptime]
+        #     service_name = ["Uptime"]
+        #     data = uptime.split("|")
+        #     uptime = service_name + data
+        # if ping is not "":
+        #     service_name = ["RTT"]
+        #     data = ping.split("|")
+        #     ping = service_name + data
+        # if chassis_temperature is not "":
+        #     chassis_temperature = ["chassis_temperature", chassis_temperature]
+        # uptime = self.append_service("Uptime", uptime, "list")
+
+
+        # metoda append_service w której bedzie się dodawac seriws
+        # z w argumentami (service, type) gdzie type to bedzie czy lista
+        # czy dict i w niej sprawdzanie usluga[2] czy jest tam wartosc 0 czy
+        # może 1 oraz 2 co wskazuje na blad i zeby wyswietlic
+        if ping and ping is not "":
             services.append((ping))
 
-        if uptime is not "":
+        if uptime and uptime is not "":
             services.append((uptime))
 
-        if interface is not "":
-            temp = str(interface).replace("'", '"')
-            temp = json.loads(temp)
-            for key in sorted(temp):
-                temp2 = temp[key].split("|")
-                print(temp2)
-                services.append([key, temp2[0], temp2[1]])
-                #services.append([key, temp[key].split("|")])
-
-        if chassis_temperature is not "":
+        if chassis_temperature and chassis_temperature is not "":
             services.append((chassis_temperature))
-
-        if fan_status is not "":
-            temp = str(fan_status).replace("'", '"')
-            temp = json.loads(temp)
-            for key in sorted(temp):
-                services.append([key, temp[key]])
+        #
+        # if chassis_temperature is not "":
+        #     services.append((chassis_temperature))
+        #
+        # if fan_status is not "":
+        #     temp = str(fan_status).replace("'", '"')
+        #     temp = json.loads(temp)
+        #     for key in sorted(temp):
+        #         services.append([key, temp[key]])
 
 
         #print(services)
+
+        if all == 0:
+            print(services)
+            services = [item for item in services if item[2] != '0']
 
         result.extend((name[0], address[0], description[0], date))
         result.append(services)
         #print(result[4][1])
         return result
 
-    def run(self):
+    def run(self, all):
         database = []
         host_id = self.get_host_id()
         for id in host_id:
-            database.append(self.get_state(id))
-        #print(database)
+            database.append(self.get_state(id, all))
+        # database = [['Nazwa 1', '192.168.202.1', 'Opis 1', datetime.datetime(2017, 11, 9, 17, 20, 9, 132378), [['FastEthernet0/1', 'Input 0.0 % Output 0.0 %', '0'], ['FastEthernet0/2', 'Interface not found', '1'], ['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.074', '0'], ['Uptime', '1:29:58', '0'], ['chassis_temperature', '20 °C', '0']]], ['nazwa 2 ', '192.168.202.1', 'Opis 2', datetime.datetime(2017, 11, 9, 17, 20, 9, 130616), [['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.233', '1'], ['chassis_temperature', '20 °C', '0']]], ['Widmo', '192.168.202.69', 'Opis ma byc I ten host ma nie dzialac.', datetime.datetime(2017, 11, 9, 17, 20, 8, 969339), [['RTT', 'Destination Host Unreachable', '2']]]]
         return database
-
-
-
-
-
-
 
     # def get_states(self):
     #     session = scoped_session(session_factory)
