@@ -22,14 +22,32 @@ def show_states_all():
 
 
 
-
-
 @app.route('/settings', methods=['GET', 'POST'])
 def admin_hp():
     error = ""
     success = ""
     settings_result = {}
     upload_file = UploadFile('data', ['xlsx', 'jpg', 'txt'])
+    path = os.path.dirname(os.path.abspath(__file__)) + "/data/settings.json"
+    settings = FIleJson(path)
+    current_settings = settings.read_file()
+
+    if 'file' not in request.files:
+        new_settings = []
+        new_settings.extend(request.form.getlist('key'))
+        new_settings.extend(request.form.getlist('oid'))
+        new_settings.extend(request.form.getlist('description'))
+        new_settings.extend(request.form.getlist('warning'))
+        new_settings.extend(request.form.getlist('critical'))
+        if new_settings:
+            settings = Settings()
+            data = settings.set_setting(current_settings, new_settings)
+            with open(path, 'w') as f:
+                json.dump(data, f)
+            success = "Change settings successfully"
+        return render_template('settings.html', name="Administrator", current_settings=current_settings, success=success)
+
+
     if upload_file.upload_file() == 1:
         error = upload_file.print_errors()
     else:
@@ -37,13 +55,13 @@ def admin_hp():
         file_name = upload_file.print_file_name()
 
         if file_name == "":
-            return render_template('settings.html', name="Administrator", settings_result=settings_result)
+            return render_template('settings.html', name="Administrator", current_settings=current_settings)
 
         erase = request.form.getlist('erase')
         import_category = ImportHost(file_name, category)
         if import_category.open_file() == 1:
             error = import_category.print_errors()
-            return render_template('settings.html', name="Administrator", error=error)
+            return render_template('settings.html', name="Administrator", error=error, current_settings=current_settings)
         import_category.read_file()
         if import_category.is_valid():
             error = "Wrong inside file format"
@@ -52,30 +70,11 @@ def admin_hp():
         else:
             if Database().add_host(import_category.print_file(), category, erase) == 1:
                 error = 'Add to database failed.'
-                return render_template('settings.html', name="Administrator", error=error)
+                return render_template('settings.html', name="Administrator", error=error, current_settings=current_settings)
             success = "Import host successful"
 
-    return render_template('settings.html', name="Administrator", error=error, success=success, settings_result=settings_result)
+    return render_template('settings.html', name="Administrator", error=error, success=success, current_settings=current_settings)
 
-@app.route('/settings', methods=['GET', 'POST'])
-def test():
-    path = os.path.dirname(os.path.abspath(__file__)) + "/data/settings.json"
-    settings = FIleJson(path)
-    current_settings = settings.read_file()
-    print(current_settings)
-    new_settings = []
-    new_settings.extend(request.form.getlist('key'))
-    new_settings.extend(request.form.getlist('oid'))
-    new_settings.extend(request.form.getlist('description'))
-    new_settings.extend(request.form.getlist('warning'))
-    new_settings.extend(request.form.getlist('critical'))
-    if new_settings:
-        settings = Settings()
-        data = settings.set_setting(current_settings, new_settings)
-        with open(path, 'w') as f:
-            json.dump(data, f)
-
-    return render_template('settings.html', name="Administrator", current_settings=current_settings)
 
 
 @app.route('/show_all', methods=['GET', 'POST'])
@@ -110,6 +109,15 @@ def show_states_problems():
         return render_template('show_services.html', name="Home")
 
     return render_template('show_states_all.html', name="Home", database=database)
+
+
+@app.route('/host/<id>', methods=['GET', 'POST'])
+def show_host(id):
+    all_states = ShowStatus()
+    result = all_states.run(1)
+    return render_template('show_host.html', name="Host", result=result)
+
+
 
 
 

@@ -7,7 +7,7 @@ class Database(Host, ServicesState):
         session.rollback()
         if erase == ['erase']:
             #print("tu bylo usuwanie")
-            Base.metadata.drop_all(Host)
+            Base.metadata.drop_all(engine)
             #Host.__table__.drop(engine)
         Base.metadata.create_all(engine)
         for i in range(1, len(data[1])):

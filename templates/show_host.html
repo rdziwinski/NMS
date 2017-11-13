@@ -1,0 +1,76 @@
+{% extends "main_base.html" %}
+{% block title %}{{ name }}{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block show_states_all %}
+    <div class="col-12">
+        <h1 class="h1">Admin Router <span class="small">(192.168.1.1)</span></h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum suscipit tempus sem, vel facilisis elit. Phasellus pellentesque velit eget consequat.</p>
+{#        <div class="row">#}
+{#            <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">Name</div>#}
+{#            <div class="col-lg-2 col-lg-3 col-md-4 col-sm-6">State</div>#}
+{#        </div>#}
+        <div class="col-lg-4 col-lg-6 col-md-8 col-sm-12">
+            <h3 class="h3">Interfaces</h3>
+            <table class="table" style="display: table">
+                <thead>
+                    <tr>
+                        <th class="w-25">Name</th>
+                        <th class="w-25">Ip address</th>
+                        <th class="w-25">Description</th>
+                        <th class="w-25">State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>FastEthernet0/0</td>
+                        <td>192.168.202.1</td>
+                        <td>Link do server</td>
+                        <td>Input: 0.04 Mbps (0.0 %) Output 0.13 Mbps (0.0 %)</td>
+                    </tr>
+                    <tr>
+                        <td>FastEthernet0/1</td>
+                        <td>10.10.10.9</td>
+                        <td>Link to Core router (ISP)</td>
+                        <td>Down</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 class="h3">Other services</h3>
+            <table class="table" style="display: table">
+                <thead>
+                    <tr>
+                        <th class="w-50">Name</th>
+                        <th class="w-50">State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Fan 1</td>
+                        <td>Normal</td>
+                    </tr>
+                    <tr>
+                        <td>Fan 2</td>
+                        <td>Normal</td>
+                    </tr>
+                    <tr>
+                        <td>RTT</td>
+                        <td>0.926</td>
+                    </tr>
+                    <tr>
+                        <td>Uptime</td>
+                        <td>3:25:07</td>
+                    </tr>
+                    <tr>
+                        <td>Chassis temperature</td>
+                        <td>30 C</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+
+{% endblock %}

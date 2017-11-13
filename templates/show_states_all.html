@@ -5,7 +5,7 @@
 {% endblock %}
 {% block show_states_all %}
 {#    Spróbować zamiast tabeli dać div z col- a usługi w środku w tabeli tylko#}
-    <table class="table" style="display: table">
+    <table class="table">
         <thead>
             <tr>
                 <th>Name</th>
@@ -14,19 +14,20 @@
                 <th>Service name</th>
                 <th>Service state</th>
             </tr>
+        </thead>
             {% for host in database %}
-                {% if host[4] %}
-                    {% if host[4][0][1] == "Destination Host Unreachable" or host[4][0][1] == "Name or service not known" %}
+                {% if host[5] %}
+                    {% if host[5][0][1] == "Destination Host Unreachable" or host[5][0][1] == "Name or service not known" %}
                         <tr class="text-danger">
                     {% else %}
                         <tr>
                     {% endif %}
-                        <td>{{ host[1] }}</td>
-                        <td>{{ host[2] }}</td>
-                        <td>{{ host[3].strftime('%d-%m-%Y %H:%M:%S ') }}</td>
+                <td><a href="/host/{{ host[0] }}">{{ host[1] }}</a><br><span class="small">({{ host[2] }})</span></td>
+                        <td>{{ host[3] }}</td>
+                        <td>{{ host[4].strftime('%d-%m-%Y %H:%M:%S ') }}</td>
                         <td>
                             <ul class="list-unstyled">
-                                {% for service in host[4] %}
+                                {% for service in host[5] %}
                                     {% if service[2] == '2' %}
                                         <li class="text-danger">
                                     {% elif service[2] == '1' %}
@@ -40,7 +41,7 @@
                         </td>
                         <td>
                             <ul class="list-unstyled">
-                                {% for service in host[4] %}
+                                {% for service in host[5] %}
                                     {% if service[2] == '2' %}
                                         <li class="text-danger">
                                     {% elif service[2] == '1' %}

@@ -4,6 +4,26 @@
 {{ super() }}
 {% endblock %}
 {% block settings %}
+    Usunąć oid, dodać opcje wyboru name hosta z hostname albo z bazy danych.
+<div class="row" style="margin-top: 1rem">
+    <div class="col-12">
+        {% if success %}
+            <div class="alert alert-success" role="alert">
+                {{ success }}
+            </div>
+        {% elif error.__class__.__name__ == 'str'%}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% elif error.__class__.__name__ != 'str'%}
+            {% for e in error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ e }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
     <div class="row">
         <div class="col-4">
             <form method=post enctype=multipart/form-data>
@@ -49,27 +69,6 @@
             </form>
         </div>
         {% endfor %}
-    </div>
-    <div class="row" style="margin-top: 1rem">
-        <div class="col-2">
-             {% if success %}
-        <div class="alert alert-success" role="alert">
-            {{ success }}
-        </div>
-    {% elif error.__class__.__name__ == 'str'%}
-        <div class="alert alert-danger" role="alert">
-            {{ error }}
-        </div>
-    {% elif error.__class__.__name__ != 'str'%}
-        {% for e in error %}
-            <div class="alert alert-danger" role="alert">
-                {{ e }}
-            </div>
-        {% endfor %}
-    {% endif %}
-
-        </div>
-
     </div>
 
 

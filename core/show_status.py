@@ -66,23 +66,29 @@ class ShowStatus():
                     result.append([key, temp2[0], temp2[1]])
                 return result
 
-
-    def get_state(self, id, all=1):  # dla jednego!
+    def get_host_data(self, id):
         session = scoped_session(session_factory)
         session = session()
-
-        result = []
-        services = []
+        host_data = []
 
         name = session.query(Host.name).filter_by(id=id).first()
         address = session.query(Host.address).filter_by(id=id).first()
         description = session.query(Host.description).filter_by(id=id).first()
+        date = session.query(ServicesState).filter_by(host_id=id).order_by(
+            ServicesState.date.desc()).first().date
+
+        host_data.extend((id, name[0], address[0], description[0], date))
+        print(host_data)
+        return host_data
+
+    def get_host_services(self, id, all):
+        session = scoped_session(session_factory)
+        session = session()
+        services = []
 
         if session.query(ServicesState).first() is None:
             return 0
 
-        date = session.query(ServicesState).filter_by(host_id=id).order_by(
-            ServicesState.date.desc()).first().date
         ping = session.query(ServicesState).filter_by(host_id=id).order_by(
             ServicesState.date.desc()).first().ping
         uptime = session.query(ServicesState).filter_by(host_id=id).order_by(
@@ -102,75 +108,32 @@ class ShowStatus():
 
         if interface:
             services.extend(interface)
-
         if fan_status:
             services.extend(fan_status)
-
-        # if interface is not "":
-        #     temp = str(interface).replace("'", '"')
-        #     temp = json.loads(temp)
-        #     print(temp)
-        #     for key in sorted(temp):
-        #         temp2 = temp[key].split("|")
-        #         print(temp[key])
-        #         services.append([key, temp2[0], temp2[1]])
-
-
-
-        # if uptime is not "":
-        #     # uptime = ["Uptime", uptime]
-        #     service_name = ["Uptime"]
-        #     data = uptime.split("|")
-        #     uptime = service_name + data
-        # if ping is not "":
-        #     service_name = ["RTT"]
-        #     data = ping.split("|")
-        #     ping = service_name + data
-        # if chassis_temperature is not "":
-        #     chassis_temperature = ["chassis_temperature", chassis_temperature]
-        # uptime = self.append_service("Uptime", uptime, "list")
-
-
-        # metoda append_service w której bedzie się dodawac seriws
-        # z w argumentami (service, type) gdzie type to bedzie czy lista
-        # czy dict i w niej sprawdzanie usluga[2] czy jest tam wartosc 0 czy
-        # może 1 oraz 2 co wskazuje na blad i zeby wyswietlic
         if ping and ping is not "":
             services.append((ping))
-
         if uptime and uptime is not "":
             services.append((uptime))
-
         if chassis_temperature and chassis_temperature is not "":
             services.append((chassis_temperature))
-        #
-        # if chassis_temperature is not "":
-        #     services.append((chassis_temperature))
-        #
-        # if fan_status is not "":
-        #     temp = str(fan_status).replace("'", '"')
-        #     temp = json.loads(temp)
-        #     for key in sorted(temp):
-        #         services.append([key, temp[key]])
-
-
-        #print(services)
-
         if all == 0:
-            print(services)
             services = [item for item in services if item[2] != '0']
+        print(services)
+        return services
 
-        result.extend((name[0], address[0], description[0], date))
-        result.append(services)
-        #print(result[4][1])
-        return result
+
 
     def run(self, all):
-        # database = []
-        # host_id = self.get_host_id()
-        # for id in host_id:
-        #     database.append(self.get_state(id, all))
-        database = [['Nazwa 1', '192.168.202.1', 'Opis 1', datetime.datetime(2017, 11, 9, 17, 20, 9, 132378), [['FastEthernet0/1', 'Input 0.0 % Output 0.0 %', '0'], ['FastEthernet0/2', 'Interface not found', '1'], ['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.074', '0'], ['Uptime', '1:29:58', '0'], ['chassis_temperature', '20 °C', '0']]], ['nazwa 2 ', '192.168.202.1', 'Opis 2', datetime.datetime(2017, 11, 9, 17, 20, 9, 130616), [['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.233', '1'], ['chassis_temperature', '20 °C', '0']]], ['Widmo', '192.168.202.69', 'Opis ma byc I ten host ma nie dzialac.', datetime.datetime(2017, 11, 9, 17, 20, 8, 969339), [['RTT', 'Destination Host Unreachable', '2']]]]
+        database = []
+        host_id = self.get_host_id()
+        for id in host_id:
+            temp = []
+            temp.extend(self.get_host_data(id))
+            temp.append(self.get_host_services(id, all))
+            database.append(temp)
+            print(database)
+            #database.append(self.get_state(id, all))
+        # database = [['1', 'Nazwa 1', '192.168.202.1', 'Opis 1', datetime.datetime(2017, 11, 9, 17, 20, 9, 132378), [['FastEthernet0/1', 'Input 0.0 % Output 0.0 %', '0'], ['FastEthernet0/2', 'Interface not found', '1'], ['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.074', '0'], ['Uptime', '1:29:58', '0'], ['chassis_temperature', '20 °C', '0']]], ['2', 'nazwa 2 ', '192.168.202.1', 'Opis 2', datetime.datetime(2017, 11, 9, 17, 20, 9, 130616), [['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.233', '1'], ['chassis_temperature', '20 °C', '0']]], ['3', 'Widmo', '192.168.202.69', 'Opis ma byc I ten host ma nie dzialac.', datetime.datetime(2017, 11, 9, 17, 20, 8, 969339), [['RTT', 'Destination Host Unreachable', '2']]]]
         return database
 
     # def get_states(self):
@@ -261,3 +224,4 @@ class ShowStatus():
 # last_check = session.query(ServicesState).filter_by(host_id=2).order_by(ServicesState.date.desc()).first().services_states
 # #print(last_check)
 
+# database = [[[1, 'Admin', '192.168.202.254', 'Router in admin room', datetime.datetime(2017, 11, 13, 18, 44, 17, 96366), [['FastEthernet0/0', 'Input: 0.03 Mbps (0.0 %) Output 0.13 Mbps (0.0 %)', '0'], ['FastEthernet0/1', 'Down', '2'], ['Fan  1', 'Normal', '0'], ['Fan  2', 'Normal', '0'], ['RTT', '2.212', '1'], ['Uptime', '3:24:38', '0'], ['chassis_temperature', 'No such instance', '1']]], [2, 'Emplojes', '10.10.10.9', 'Router in employees room', datetime.datetime(2017, 11, 13, 18, 43, 48, 215819), [['FastEthernet0/0', 'Input: 56.95 Mbps (0.57 %) Output 0.02 Mbps (0.0 %)', '0'], ['FastEthernet0/1', 'Down', '2'], ['Serial0/2/0', 'Input: 0.0 Mbps (0.0 %) Output 0.0 Mbps (0.0 %)', '0'], ['Serial0/2/1', 'Input: 0.0 Mbps (0.0 %) Output 0.01 Mbps (0.0 %)', '0'], ['Fan  1', 'Normal', '0'], ['Fan  2', 'Normal', '0'], ['RTT', '229.407', '1'], ['Uptime', '1:54:50', '0'], ['chassis_temperature', 'No such instance', '1']]], [3, 'Core', '10.10.10.5', 'Core router (ISP)', datetime.datetime(2017, 11, 13, 18, 43, 48, 90100), [['Serial0/2/0', 'Input: 0.0 Mbps (0.0 %) Output 0.0 Mbps (0.0 %)', '0'], ['Serial0/2/1', 'Input: 0.51 Mbps (3.98 %) Output 0.59 Mbps (4.61 %)', '0'], ['Fan  1', 'Normal', '0'], ['Fan  2', 'Normal', '0'], ['RTT', '13.355', '1'], ['Uptime', '1:54:01', '0'], ['chassis_temperature', 'No such instance', '1']]]]]

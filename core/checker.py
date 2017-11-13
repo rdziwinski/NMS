@@ -10,6 +10,7 @@ import time
 import subprocess
 import datetime as czas
 import json
+from core.file_json import *
 
 class Checker():
     def __init__(self, host):
@@ -20,6 +21,7 @@ class Checker():
             self.session = Session(hostname=host[4], version=3, security_username=host[7], security_level=host[8],
                                    privacy_protocol=host[9], privacy_password=host[10], auth_protocol=host[11],
                                    auth_password=host[12])
+        self.json_data = FIleJson()
 
     def uptime(self):  # 0 - OK, 1 - warn, 2 - Crit
         stan = "0"
@@ -78,19 +80,19 @@ class Checker():
             number = snmp_get.value
             status = {
                 1: "Up",
-                2: "Down",
-                3: "Testing",
-                4: "Unknown",
-                5: "Dormant",
-                6: "Not present",
-                7: "Lower layer down"
+                2: "Down|2",
+                3: "Testing|1",
+                4: "Unknown|1",
+                5: "Dormant|1",
+                6: "Not present|1",
+                7: "Lower layer down|1"
             }
             status = status.get(int(number), "error")
             return status
             #return_string = interface + ": " + status
             #return return_string
 
-    def interface_utilization(self, interface, seconds=1):
+    def interface_utilization(self, interface, seconds=2): # tu mozna dodac ustawienie
         if_index = self.interface_select(interface)
 
         if if_index == 0:
@@ -102,7 +104,6 @@ class Checker():
             snmp_get = self.session.get(oid)
             if_speed = snmp_get.value
             return if_speed
-
 
         def run(direction):
             oid = " "
@@ -137,11 +138,11 @@ class Checker():
         mbits = int(get_if_speed())/1e6
         input_percent = input/mbits
         output_percent = output/mbits
-        if (input_percent or output_percent) > 30:
-            stan = "1"
-        elif (input_percent or output_percent) > 50:
+        if (input_percent or output_percent) > 50:
             stan = "2"
-        result = "Input " + str(input_percent) + " % Output " + str(output_percent) + " %|"
+        elif (input_percent or output_percent) > 30:
+            stan = "1"
+        result = "Input: " + str(input) + " Mbps (" + str(round(input_percent, 2)) + " %) Output " + str(output) + " Mbps (" + str(round(output_percent, 2)) + " %)|"
         return result + stan
 
     def interface(self, interfaces):
@@ -149,13 +150,24 @@ class Checker():
         interface_list = interfaces.split(",")
         for int in interface_list:
             int_status = self.interface_status(int)
-            if int_status is not "Down":
+            if int_status is "Up":
                 int_utilization = self.interface_utilization(int)
                 interfaces_results.append(int_utilization)
             else:
                 interfaces_results.append(int_status)
         result = dict(zip(interface_list, interfaces_results))
+        #print(result)
         return result
+
+    def interface_description(self, interface):
+        if_index = self.interface_select(interface)
+
+        if if_index == 0:
+            return 0
+        else:
+            oid = '1.3.6.1.2.1.2.2.1.2.' + str(if_index)
+            snmp_get = self.session.get(oid)
+            return snmp_get.value
 
 
 
@@ -177,6 +189,9 @@ class Checker():
     def chassis_temperature(self):
         stan = '0'
         snmp_get = self.session.get('1.3.6.1.4.1.9.9.13.1.3.1.3.1')
+        if snmp_get.value == "NOSUCHINSTANCE":
+            return "No such instance|1"
+
         if int(snmp_get.value) > 20:
             stan = '1'
         elif int(snmp_get.value) > 30:
@@ -207,3 +222,9 @@ class Checker():
                 fans_status.append("Not functioning|1")
         dictionary = dict(zip(fans, fans_status))
         return dictionary
+
+    def hostname(self):
+        stan = "0"
+        snmp_get = self.session.get('1.3.6.1.2.1.1.5.0')
+        result = snmp_get.value + "|" + stan
+        return result
