@@ -1,4 +1,3 @@
-from core.file_json import *
 import os
 import sys
 

@@ -5,14 +5,14 @@
 {% endblock %}
 {% block settings %}
     <div class="row">
-        <div class="col-2">
+        <div class="col-4">
             <form method=post enctype=multipart/form-data>
+                <h3 class="h3">Import hosts</h3>
                 <div class="form-group">
                     <label for="example-text-input" class="form-control-label">Category</label>
                     <input class="form-control" type="text" name=category title="category" id="example-text-input">
                 </div>
                 <div class="form-group">
-                    <label for="exampleInputFile">File input</label>
                     <input type="file" name=file class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
                     <small id="fileHelp" class="form-text text-muted">Accept *.xlsx file</small>
                 </div>
@@ -24,6 +24,31 @@
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
+        {% for key, value in current_settings.items() %}
+        <div class="col-4">
+            <h3 class="h3">{{ value["name"] }}</h3>
+            <form method=post enctype=multipart/form-data>
+                <input type="hidden" name=key title="key" value={{ key }}>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Oid</label>
+                    <input class="form-control" type="text" name=oid title="oid" id="example-text-input" placeholder="{{ value["oid"] }}">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Description</label>
+                    <input class="form-control" type="text" name=description title="description" id="example-text-input"  placeholder="{{ value["description"] }}">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Warning level</label>
+                    <input class="form-control" type="text" name=warning title="warning" id="example-text-input"  placeholder="{{ value["warning"] }}">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Critical level</label>
+                    <input class="form-control" type="text" name=critical title="critical" id="example-text-input"  placeholder="{{ value["critical"] }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        {% endfor %}
     </div>
     <div class="row" style="margin-top: 1rem">
         <div class="col-2">

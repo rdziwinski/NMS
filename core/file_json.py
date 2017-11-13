@@ -1,11 +1,10 @@
 import json
-from core.statements import *
 
 
 class FIleJson:  # change from File
     data = []
 
-    def __init__(self, file_name='../data/manager.json', mode='r'):
+    def __init__(self, file_name='../data/settings.json', mode='r'):
         self.file_name = file_name
         self.mode = mode
         self.read_file()
@@ -16,13 +15,17 @@ class FIleJson:  # change from File
                 self.data = json.load(settings_data)
                 return self.data
         except Exception as err:
-            error = Statements()
-            statement = error.get_statement(err, str(err))
-            return statement
+            print(err)
+            return err
+            # error = Statements()
+            # statement = error.get_statement(err, str(err))
+            # return statement
 
-    def get_record(self, level_1, level_2=""):
+    def get_record(self, level_1="", level_2=""):
         try:
             if level_1 == "" and level_2 == "":
+                return self.data
+            elif level_1 == "" and level_2 == "":
                 return self.data
             elif level_1 != "" and level_2 == "":
                 return self.data[level_1]
@@ -34,6 +37,8 @@ class FIleJson:  # change from File
             else:
                 return self.data[level_1][level_2]
         except Exception as err:
-            error = Statements()
-            statement = error.get_statement(err, str(err))
-            return statement
+            print(err)
+            return err
+            # error = Statements()
+            # statement = error.get_statement(err, str(err))
+            # return statement

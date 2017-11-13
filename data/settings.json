@@ -1,0 +1,37 @@
+{
+    "uptime": {
+      "name":"Uptime",
+      "oid":"1.1.1.1",
+      "description":"ile hsot dziala",
+      "warning":"20",
+      "critical":"10"
+    },
+    "ping": {
+      "name":"ping",
+      "oid":"2.2.2",
+      "description":"rtt",
+      "warning":"5",
+      "critical":"10"
+    },
+    "interface": {
+      "name":"interface",
+      "oid":"3.3.3",
+      "description":"statusy int",
+      "warning":"5",
+      "critical":"10"
+    },
+    "chassis_temperature": {
+      "name":"Chassis temperature",
+      "oid":"4.4.4.4",
+      "description":"temperatura",
+      "warning":"5",
+      "critical":"10"
+    },
+    "fan_status": {
+      "name":"Fan status",
+      "oid":"5.5.5.5",
+      "description":"wiatraki",
+      "warning":"5",
+      "critical":"10"
+    }
+}

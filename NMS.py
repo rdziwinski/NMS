@@ -7,8 +7,9 @@ from core.database_engine import *
 from core.import_host import ImportHost
 from core.upload_file import UploadFile
 from core.show_status import *
+from core.settings import *
 app = Flask(__name__)
-
+import os
 
 @app.route('/', methods=['GET', 'POST'])
 def show_states_all():
@@ -20,10 +21,14 @@ def show_states_all():
     return render_template('show_states_all.html', name="Home", database=database)
 
 
+
+
+
 @app.route('/settings', methods=['GET', 'POST'])
 def admin_hp():
     error = ""
     success = ""
+    settings_result = {}
     upload_file = UploadFile('data', ['xlsx', 'jpg', 'txt'])
     if upload_file.upload_file() == 1:
         error = upload_file.print_errors()
@@ -32,7 +37,7 @@ def admin_hp():
         file_name = upload_file.print_file_name()
 
         if file_name == "":
-            return render_template('settings.html', name="Administrator")
+            return render_template('settings.html', name="Administrator", settings_result=settings_result)
 
         erase = request.form.getlist('erase')
         import_category = ImportHost(file_name, category)
@@ -49,7 +54,28 @@ def admin_hp():
                 error = 'Add to database failed.'
                 return render_template('settings.html', name="Administrator", error=error)
             success = "Import host successful"
-    return render_template('settings.html', name="Administrator", error=error, success=success)
+
+    return render_template('settings.html', name="Administrator", error=error, success=success, settings_result=settings_result)
+
+@app.route('/settings', methods=['GET', 'POST'])
+def test():
+    path = os.path.dirname(os.path.abspath(__file__)) + "/data/settings.json"
+    settings = FIleJson(path)
+    current_settings = settings.read_file()
+    print(current_settings)
+    new_settings = []
+    new_settings.extend(request.form.getlist('key'))
+    new_settings.extend(request.form.getlist('oid'))
+    new_settings.extend(request.form.getlist('description'))
+    new_settings.extend(request.form.getlist('warning'))
+    new_settings.extend(request.form.getlist('critical'))
+    if new_settings:
+        settings = Settings()
+        data = settings.set_setting(current_settings, new_settings)
+        with open(path, 'w') as f:
+            json.dump(data, f)
+
+    return render_template('settings.html', name="Administrator", current_settings=current_settings)
 
 
 @app.route('/show_all', methods=['GET', 'POST'])
@@ -84,7 +110,6 @@ def show_states_problems():
         return render_template('show_services.html', name="Home")
 
     return render_template('show_states_all.html', name="Home", database=database)
-
 
 
 

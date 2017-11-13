@@ -166,11 +166,11 @@ class ShowStatus():
         return result
 
     def run(self, all):
-        database = []
-        host_id = self.get_host_id()
-        for id in host_id:
-            database.append(self.get_state(id, all))
-        # database = [['Nazwa 1', '192.168.202.1', 'Opis 1', datetime.datetime(2017, 11, 9, 17, 20, 9, 132378), [['FastEthernet0/1', 'Input 0.0 % Output 0.0 %', '0'], ['FastEthernet0/2', 'Interface not found', '1'], ['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.074', '0'], ['Uptime', '1:29:58', '0'], ['chassis_temperature', '20 °C', '0']]], ['nazwa 2 ', '192.168.202.1', 'Opis 2', datetime.datetime(2017, 11, 9, 17, 20, 9, 130616), [['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.233', '1'], ['chassis_temperature', '20 °C', '0']]], ['Widmo', '192.168.202.69', 'Opis ma byc I ten host ma nie dzialac.', datetime.datetime(2017, 11, 9, 17, 20, 8, 969339), [['RTT', 'Destination Host Unreachable', '2']]]]
+        # database = []
+        # host_id = self.get_host_id()
+        # for id in host_id:
+        #     database.append(self.get_state(id, all))
+        database = [['Nazwa 1', '192.168.202.1', 'Opis 1', datetime.datetime(2017, 11, 9, 17, 20, 9, 132378), [['FastEthernet0/1', 'Input 0.0 % Output 0.0 %', '0'], ['FastEthernet0/2', 'Interface not found', '1'], ['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.074', '0'], ['Uptime', '1:29:58', '0'], ['chassis_temperature', '20 °C', '0']]], ['nazwa 2 ', '192.168.202.1', 'Opis 2', datetime.datetime(2017, 11, 9, 17, 20, 9, 130616), [['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.233', '1'], ['chassis_temperature', '20 °C', '0']]], ['Widmo', '192.168.202.69', 'Opis ma byc I ten host ma nie dzialac.', datetime.datetime(2017, 11, 9, 17, 20, 8, 969339), [['RTT', 'Destination Host Unreachable', '2']]]]
         return database
 
     # def get_states(self):
