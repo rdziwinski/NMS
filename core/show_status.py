@@ -36,7 +36,6 @@ class ShowStatus():
                 temp = json.loads(temp)
                 for key in sorted(temp):
                     temp2 = temp[key].split("|")
-                    print(temp)
                     result.append([key, temp2[0], temp2[1]])
                 return result
 

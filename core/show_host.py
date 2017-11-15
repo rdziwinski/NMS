@@ -14,7 +14,6 @@ class ShowHost(ShowStatus):
         data.append(self.get_address(self.id))
         data.append(self.get_description(self.id))
         data.append(self.get_ping(self.id))
-        print(data)
         return data
 
     def get_interfaces(self):

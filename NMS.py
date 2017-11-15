@@ -1,15 +1,17 @@
-from multiprocessing.dummy import Pool as ThreadPool
-
 from flask import render_template, request, Flask
 
-from core.check_engine import CheckEngine
-from core.database_engine import *
 from core.import_host import ImportHost
 from core.upload_file import UploadFile
-from core.show_status import *
 from core.settings import *
 from core.show_host import *
 import os
+
+from flask import render_template, request, Flask
+
+from core.import_host import ImportHost
+from core.settings import *
+from core.show_host import *
+from core.upload_file import UploadFile
 
 app = Flask(__name__)
 
@@ -120,7 +122,6 @@ def show_host(id):
         services = show2.get_host_services(id, 1)
 
         if request.form.getlist('get_interfaces'):
-            print("weszło")
             interfaces = show.get_interfaces()
             return render_template('show_host.html', name="Host", host_data=host_data, interfaces=interfaces,
                                    services=services)

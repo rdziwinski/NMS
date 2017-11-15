@@ -4,6 +4,7 @@ from core.show_status import *
 import time
 import easysnmp
 
+
 class RunEngine:
     def __init__(self, interval, run=1):
         while run:
@@ -16,6 +17,5 @@ class RunEngine:
                 pool.map(engine.run, hosts)
 
             time.sleep(interval)
-
 
 RunEngine(1)

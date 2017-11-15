@@ -12,7 +12,7 @@ import datetime as czas
 import json
 from core.file_json import *
 import collections
-
+from core.file_json import *
 
 class Checker():
     def __init__(self, host):
@@ -23,7 +23,8 @@ class Checker():
             self.session = Session(hostname=host[4], version=3, security_username=host[7], security_level=host[8],
                                    privacy_protocol=host[9], privacy_password=host[10], auth_protocol=host[11],
                                    auth_password=host[12])
-        self.json_data = FIleJson()
+        self.settings = FIleJson("/root/home/user/NMS/data/services.json")
+
 
     def uptime(self):  # 0 - OK, 1 - warn, 2 - Crit
         stan = "0"
@@ -31,14 +32,17 @@ class Checker():
         hundredths_sec = int(snmp_get.value)
        # print(hundredths_sec)
         # sec = int((hundredths_sec / 100) % 60)
-        # min = int((hundredths_sec / (100 * 60)) % 60)
+        min = int((hundredths_sec / (100 * 60)))
         # hours = int((hundredths_sec / (100 * 60 * 60)) % 24)
         # result = "%02d:%02d:%02d" % (hours, min, sec)
         date = timedelta(microseconds=hundredths_sec*1e4)
-        uptime = str(date).split(".")[0]
-        #result = {"Uptime": uptime}
-        if hundredths_sec < 600*1e2:
+
+        if min < int(self.settings.get_record('uptime', "critical")): # dziala
             stan = '2'
+        elif min < int(self.settings.get_record('uptime', "warning")):
+            stan = '1'
+
+        uptime = str(date).split(".")[0]
         result = uptime + "|" + stan
         return result
 
@@ -49,7 +53,9 @@ class Checker():
         data = str(data)
         if "ttl" in data:
             rtt = data.split("/")[-3]
-            if float(rtt) > 1.2:
+            if float(rtt) > float(self.settings.get_record('ping', "critical")):
+                stan = '2'
+            elif float(rtt) > float(self.settings.get_record('ping', "warning")):
                 stan = '1'
             result = rtt + "|" + stan
             return result
@@ -58,7 +64,7 @@ class Checker():
         elif "100% packet loss" in data:
             return "100% packet loss|2"
         else:
-            return "Name or service not known|1"
+            return "Name or service not known|2"
 
     def interface_select(self, interface):
         interfaces = []
@@ -82,7 +88,6 @@ class Checker():
         else:
             oid = '1.3.6.1.2.1.2.2.1.8.' + str(if_index)
             snmp_get = self.session.get(oid)
-            print(snmp_get)
             number = snmp_get.value
             status = {
                 1: "Up|1",

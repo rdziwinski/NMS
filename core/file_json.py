@@ -4,7 +4,7 @@ import json
 class FIleJson:  # change from File
     data = []
 
-    def __init__(self, file_name='../data/settings.json', mode='r'):
+    def __init__(self, file_name, mode='r'):
         self.file_name = file_name
         self.mode = mode
         self.read_file()
