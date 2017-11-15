@@ -37,14 +37,14 @@ class CheckEngine:
         # print(host)
         # print("===")
         services_state.append(check.ping())
-        if host[13] is True or host[13] is '1':
+        if host[13] is not None:
+            services_state.append(check.interface(host[13]))
+        else:
+            services_state.append("")
+        if host[14] is True or host[14] is '1':
             services_state.append(check.uptime())  # tymczasowe
         else:
             services_state.append("")  # towniez tymczasowe
-        if host[14] is not None:
-            services_state.append(check.interface(host[14]))
-        else:
-            services_state.append("")
         if host[15] is True or host[15] is '1':
             services_state.append(check.chassis_temperature())
         else:
@@ -56,7 +56,7 @@ class CheckEngine:
         #print("====")
         #print(services_state)
         add_to_database = ServicesState(host_id=host_id, date=date, ping=str(services_state[0]),
-                                        uptime=str(services_state[1]), interface=str(services_state[2]),
+                                        interface=str(services_state[1]), uptime=str(services_state[2]),
                                         chassis_temperature=str(services_state[3]), fan_status=str(services_state[4]))
         #print(str(services_state[2]))
         session = scoped_session(session_factory)

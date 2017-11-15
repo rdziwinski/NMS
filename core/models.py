@@ -26,8 +26,8 @@ class Host(Base):
     priv_key = Column(String(30))
     priv_protocol = Column(String(30))
     auth_key = Column(String(30))
-    uptime = Column(String(30))
     interface = Column(String(255))
+    uptime = Column(String(30))
     chassis_temperature = Column(Boolean)
     fan_status = Column(Boolean)
     is_on = Column(Boolean)
@@ -37,9 +37,8 @@ class Host(Base):
             self.name, self.category, self.description)
 
     def __init__(self, name="",  category="", description="", address="", snmp_version="", community="", security_name="",
-                 security_level="", auth_protocol="", priv_key="", priv_protocol="", auth_key="",
-                 uptime="", interface="", chassis_temperature="",
-                 fan_status="", is_on=""):
+                 security_level="", auth_protocol="", priv_key="", priv_protocol="", auth_key="", interface="", uptime="",
+                 chassis_temperature="", fan_status="", is_on=""):
         self.name = name
         self.category = category
         self.description = description
@@ -52,8 +51,8 @@ class Host(Base):
         self.priv_key = priv_key
         self.priv_protocol = priv_protocol
         self.auth_key = auth_key
-        self.uptime = uptime
         self.interface = interface
+        self.uptime = uptime
         self.chassis_temperature = chassis_temperature
         self.fan_status = fan_status
         self.is_on = is_on
@@ -64,17 +63,17 @@ class ServicesState(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     host_id = Column(Integer)
     date = Column(DateTime)  # tu ma byc datetime
-    uptime = Column(String(30))
     ping = Column(String(30))
     interface = Column(String(255))
+    uptime = Column(String(30))
     chassis_temperature = Column(String(30))
     fan_status = Column(String(255))
 
-    def __init__(self, host_id="", date="", ping="", uptime="", interface="", chassis_temperature="", fan_status=""):
+    def __init__(self, host_id="", date="", ping="", interface="", uptime="", chassis_temperature="", fan_status=""):
         self.host_id = host_id
         self.date = date
         self.ping = ping
-        self.uptime = uptime
         self.interface = interface
+        self.uptime = uptime
         self.chassis_temperature = chassis_temperature
         self.fan_status = fan_status
