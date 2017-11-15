@@ -1,6 +1,13 @@
 from core.models import *
 from sqlalchemy import desc
+
+
 class Database(Host, ServicesState):
+    def connect(self):
+        session = scoped_session(session_factory)
+        session = session()
+        return session
+
     def add_host(self, data, category, erase):  # dodac obsluge bledu jak juz jest host dodany UNIQUE
         session = scoped_session(session_factory)
         session = session()
@@ -21,14 +28,39 @@ class Database(Host, ServicesState):
             # except:
             #    return 1
 
-    def get_hosts(self):
+    def get_hosts(self, all=1, id=0):
         # session.rollback()
         one_host = []
         database = []
         session = scoped_session(session_factory)
         session = session()
-        hosts = session.query(Host).all()
-        for host in hosts:
+        if all == 1:
+            hosts = session.query(Host).all()
+            for host in hosts:
+                one_host.append(host.id)
+                one_host.append(host.name)
+                one_host.append(host.category)
+                one_host.append(host.description)
+                one_host.append(host.address)
+                one_host.append(host.snmp_version)
+                one_host.append(host.community)
+                one_host.append(host.security_name)
+                one_host.append(host.security_level)
+                one_host.append(host.auth_protocol)
+                one_host.append(host.priv_key)
+                one_host.append(host.priv_protocol)
+                one_host.append(host.auth_key)
+                one_host.append(host.uptime)
+                one_host.append(host.interface)
+                one_host.append(host.chassis_temperature)
+                one_host.append(host.fan_status)
+                one_host.append(host.is_on)
+                database.append(one_host)
+                one_host = []
+            return database
+
+        elif all == 0:
+            host = session.query(Host).filter_by(id=id).first()
             one_host.append(host.id)
             one_host.append(host.name)
             one_host.append(host.category)
@@ -47,9 +79,9 @@ class Database(Host, ServicesState):
             one_host.append(host.chassis_temperature)
             one_host.append(host.fan_status)
             one_host.append(host.is_on)
-            database.append(one_host)
-            one_host = []
-        return database
+        return one_host
+
+
 
     def get_services_states(self):
         session = scoped_session(session_factory)

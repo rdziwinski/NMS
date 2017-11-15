@@ -1,17 +1,8 @@
-services = [['FastEthernet0/1', 'Input 0.0 % Output 0.0 %', '0'], ['FastEthernet0/2', 'Interface not found', '1'],
-            ['Fan 1', 'Normal', '0'], ['Fan 2', 'Normal', '0'], ['Fan 3', 'Normal', '0'], ['RTT', '1.173', '0'],
-            ['Uptime', '1:55:46', '0'], ['chassis_temperature', '20 °C', '0']]
-# print("oryginal:")
-# print(services)
-# for item in services:
-#     print("item:")
-#     print(item)
-#     if item[2] == '0':
-#         print(item[2])
-#         services.remove(item)
-# print("po usunieciu:")
-# print(services)
+import json
 
+data = {'interface': {'name': 'interface', 'critical': '40', 'warning': '40'}, 'chassis_temperature': {'name': 'Chassis temperature', 'critical': '10', 'warning': '5'}, 'fan_status': {'name': 'Fan status', 'critical': '10', 'warning': '5'}, 'ping': {'name': 'ping', 'critical': '10', 'warning': '5'}, 'uptime': {'name': 'Uptime', 'critical': '10', 'warning': '20'}}
 
-result = [item for item in services if item[2] != '0']
-print(result)
+path = os.path.dirname(os.path.abspath(__file__)) + "/data/services.json"
+
+with open(path, 'w') as f:
+    json.dump(data, f)

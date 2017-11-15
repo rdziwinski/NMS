@@ -11,6 +11,8 @@ import subprocess
 import datetime as czas
 import json
 from core.file_json import *
+import collections
+
 
 class Checker():
     def __init__(self, host):
@@ -52,34 +54,38 @@ class Checker():
             result = rtt + "|" + stan
             return result
         elif "Destination Host Unreachable" in data:
-            unreachable = "Destination Host Unreachable" + "|2"
-            return unreachable
+            return"Destination Host Unreachable|2"
+        elif "100% packet loss" in data:
+            return "100% packet loss|2"
         else:
-            not_know = "Name or service not known" + "|1"
-            return not_know
+            return "Name or service not known|1"
 
     def interface_select(self, interface):
         interfaces = []
+        oids = []
         items = self.session.walk('1.3.6.1.2.1.2.2.1.2')
         for item in items:
             interfaces.append(item.value)
-        if interface in interfaces:
-            if_index = interfaces.index(interface)+1
+            oids.append(item.oid.split(".")[-1])
+        interfaces_dcit = dict(zip(interfaces, oids))
+        try:
+            if_index = interfaces_dcit[interface]
             return if_index
-        else:
+        except KeyError:
             return 0
 
     def interface_status(self, interface):
         if_index = self.interface_select(interface)
 
         if if_index == 0:
-            return "Interface not found"
+            return "Interface not found|1"
         else:
             oid = '1.3.6.1.2.1.2.2.1.8.' + str(if_index)
             snmp_get = self.session.get(oid)
+            print(snmp_get)
             number = snmp_get.value
             status = {
-                1: "Up",
+                1: "Up|1",
                 2: "Down|2",
                 3: "Testing|1",
                 4: "Unknown|1",
@@ -142,7 +148,7 @@ class Checker():
             stan = "2"
         elif (input_percent or output_percent) > 30:
             stan = "1"
-        result = "Input: " + str(input) + " Mbps (" + str(round(input_percent, 2)) + " %) Output " + str(output) + " Mbps (" + str(round(output_percent, 2)) + " %)|"
+        result = "Input: " + str(input) + " Mbps (" + str(round(input_percent, 2)) + " %); Output " + str(output) + " Mbps (" + str(round(output_percent, 2)) + " %)|"
         return result + stan
 
     def interface(self, interfaces):
@@ -150,13 +156,12 @@ class Checker():
         interface_list = interfaces.split(",")
         for int in interface_list:
             int_status = self.interface_status(int)
-            if int_status is "Up":
+            if int_status is "Up|1":
                 int_utilization = self.interface_utilization(int)
                 interfaces_results.append(int_utilization)
             else:
                 interfaces_results.append(int_status)
         result = dict(zip(interface_list, interfaces_results))
-        #print(result)
         return result
 
     def interface_description(self, interface):
@@ -165,26 +170,41 @@ class Checker():
         if if_index == 0:
             return 0
         else:
-            oid = '1.3.6.1.2.1.2.2.1.2.' + str(if_index)
+            oid = '1.3.6.1.2.1.31.1.1.1.18.' + str(if_index)
             snmp_get = self.session.get(oid)
             return snmp_get.value
 
+    def all_interfaces(self):
+        interfaces = []
+        if_index = []
+        items = self.session.walk('1.3.6.1.2.1.2.2.1.2')
+        for item in items:
+            interfaces.append(item.value)
+            if_index.append(item.oid.split(".")[-1])
+        interfaces_dict = dict(zip(interfaces, if_index))
+        #return interfaces_dict
+        return collections.OrderedDict(sorted(interfaces_dict.items(), key=lambda t: t[1]))
 
+    def interface_address(self, if_index):
+        items = self.session.walk('1.3.6.1.2.1.4.20.1.2')
+        for item in items:
+            if item.value == if_index:
+                temp = item.oid.split(".")[-4:]
+                temp.insert(1, '.')
+                temp.insert(3, '.')
+                temp.insert(5, '.')
+                return ''.join(temp)
 
-        # interfaces_status = []
-        # dictionary = {}
-        # interface_list = interfaces.split(",")
-        # for int in interface_list:
-        #     #print(int)
-        #     int_status = self.interface_status(int)
-        #    # if int_status is not "Up":
-        #        # print(int)
-        #        # print("duuuupa")
-        #
-        #     #interfaces_status.append()
-        #     #interfaces_status.append(self.interface_utilization(int))
-        #     #dictionary = dict(zip(interface_list, interfaces_status))
-        # return "cycki"
+    # def interface_info(self, interface):
+    #     if_index = self.interface_select(interface)
+    #
+    #     if if_index == 0:
+    #         return 0
+    #     else:
+    #         oid = '1.3.6.1.2.1.31.1.1.1.18.' + str(if_index)
+    #         snmp_get = self.session.get(oid)
+    #         print(snmp_get)
+    #         return snmp_get.value
 
     def chassis_temperature(self):
         stan = '0'
@@ -228,3 +248,5 @@ class Checker():
         snmp_get = self.session.get('1.3.6.1.2.1.1.5.0')
         result = snmp_get.value + "|" + stan
         return result
+
+

@@ -1,0 +1,27 @@
+{
+    "uptime": {
+      "name":"Uptime",
+      "warning":"20",
+      "critical":"10"
+    },
+    "ping": {
+      "name":"ping",
+      "warning":"5",
+      "critical":"10"
+    },
+    "interface": {
+      "name":"interface",
+      "warning":"10000",
+      "critical":"10"
+    },
+    "chassis_temperature": {
+      "name":"Chassis temperature",
+      "warning":"5",
+      "critical":"10"
+    },
+    "fan_status": {
+      "name":"Fan status",
+      "warning":"5",
+      "critical":"10"
+    }
+}

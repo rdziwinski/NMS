@@ -17,7 +17,7 @@
         </thead>
             {% for host in database %}
                 {% if host[5] %}
-                    {% if host[5][0][1] == "Destination Host Unreachable" or host[5][0][1] == "Name or service not known" %}
+                    {% if host[5][0][2] == "2"  %}
                         <tr class="text-danger">
                     {% else %}
                         <tr>

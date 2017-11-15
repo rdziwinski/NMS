@@ -8,8 +8,11 @@ from core.import_host import ImportHost
 from core.upload_file import UploadFile
 from core.show_status import *
 from core.settings import *
-app = Flask(__name__)
+from core.show_host import *
 import os
+
+app = Flask(__name__)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def show_states_all():
@@ -26,17 +29,14 @@ def show_states_all():
 def admin_hp():
     error = ""
     success = ""
-    settings_result = {}
     upload_file = UploadFile('data', ['xlsx', 'jpg', 'txt'])
-    path = os.path.dirname(os.path.abspath(__file__)) + "/data/settings.json"
+    path = os.path.dirname(os.path.abspath(__file__)) + "/data/services.json"
     settings = FIleJson(path)
     current_settings = settings.read_file()
 
     if 'file' not in request.files:
         new_settings = []
         new_settings.extend(request.form.getlist('key'))
-        new_settings.extend(request.form.getlist('oid'))
-        new_settings.extend(request.form.getlist('description'))
         new_settings.extend(request.form.getlist('warning'))
         new_settings.extend(request.form.getlist('critical'))
         if new_settings:
@@ -97,7 +97,7 @@ def monitoring():
     hosts = Database().get_hosts()
     #print(hosts)
     pool = ThreadPool(32)
-    result = pool.map(engine.run, hosts)
+    pool.map(engine.run, hosts)
    # Base.metadata.drop_all(engine)
     return render_template('monitoring.html', name="Run")
 
@@ -113,9 +113,20 @@ def show_states_problems():
 
 @app.route('/host/<id>', methods=['GET', 'POST'])
 def show_host(id):
-    all_states = ShowStatus()
-    result = all_states.run(1)
-    return render_template('show_host.html', name="Host", result=result)
+    show = ShowHost(id)
+    show2 = ShowStatus()
+    host_data = show.get_data()
+    if host_data[3][2] != '2':
+        services = show2.get_host_services(id, 1)
+
+        if request.form.getlist('get_interfaces'):
+            print("weszło")
+            interfaces = show.get_interfaces()
+            return render_template('show_host.html', name="Host", host_data=host_data, interfaces=interfaces,
+                                   services=services)
+        interfaces = [['test', 'test', 'test', ['test', 'test']]]
+        return render_template('show_host.html', name="Host", host_data=host_data, services=services)
+    return render_template('show_host.html', name="Host", host_data=host_data, down=1)
 
 
 
