@@ -85,6 +85,12 @@ class ShowStatus():
         if fan_status:
             return self.append_service("", fan_status, "dict")
 
+    def get_cpu_utilization(self, id):
+        session = Database().connect()
+        cpu_utilization = session.query(ServicesState).filter_by(host_id=id).order_by(ServicesState.date.desc()).first().cpu_utilization
+        if cpu_utilization:
+            return self.append_service("", cpu_utilization, "dict")
+
     def get_host_data(self, id):
         host_data = []
         host_data.extend((id, self.get_name(id), self.get_address(id), self.get_description(id), self.get_date(id)))
@@ -103,13 +109,16 @@ class ShowStatus():
         chassis_temperature = self.get_chassis_temperature(id)
         interface = self.get_interface(id)
         fan_status = self.get_fan_status(id)
+        cpu_utilization = self.get_cpu_utilization(id)
 
+        if ping:
+            services.append(ping)
         if interface:
             services.extend(interface)
         if fan_status:
             services.extend(fan_status)
-        if ping:
-            services.append(ping)
+        if cpu_utilization:
+            services.extend(cpu_utilization)
         if uptime:
             services.append(uptime)
         if chassis_temperature:

@@ -6,7 +6,7 @@ import easysnmp
 
 
 class RunEngine:
-    def __init__(self, interval, run=1):
+    def __init__(self, interval=1, run=1):
         while run:
             engine = CheckEngine()
             hosts = Database().get_hosts()

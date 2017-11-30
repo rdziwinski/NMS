@@ -30,6 +30,7 @@ class Host(Base):
     uptime = Column(String(30))
     chassis_temperature = Column(Boolean)
     fan_status = Column(Boolean)
+    cpu_utilization = Column(Boolean)
     is_on = Column(Boolean)
 
     def __repr__(self):
@@ -38,7 +39,7 @@ class Host(Base):
 
     def __init__(self, name="",  category="", description="", address="", snmp_version="", community="", security_name="",
                  security_level="", auth_protocol="", priv_key="", priv_protocol="", auth_key="", interface="", uptime="",
-                 chassis_temperature="", fan_status="", is_on=""):
+                 chassis_temperature="", fan_status="", cpu_utilization="", is_on=""):
         self.name = name
         self.category = category
         self.description = description
@@ -55,6 +56,7 @@ class Host(Base):
         self.uptime = uptime
         self.chassis_temperature = chassis_temperature
         self.fan_status = fan_status
+        self.cpu_utilization = cpu_utilization
         self.is_on = is_on
 
 
@@ -68,8 +70,9 @@ class ServicesState(Base):
     uptime = Column(String(30))
     chassis_temperature = Column(String(30))
     fan_status = Column(String(255))
+    cpu_utilization = Column(String(255))
 
-    def __init__(self, host_id="", date="", ping="", interface="", uptime="", chassis_temperature="", fan_status=""):
+    def __init__(self, host_id="", date="", ping="", interface="", uptime="", chassis_temperature="", fan_status="", cpu_utilization=""):
         self.host_id = host_id
         self.date = date
         self.ping = ping
@@ -77,3 +80,4 @@ class ServicesState(Base):
         self.uptime = uptime
         self.chassis_temperature = chassis_temperature
         self.fan_status = fan_status
+        self.cpu_utilization = cpu_utilization

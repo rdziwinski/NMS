@@ -3,10 +3,10 @@ from multiprocessing.dummy import Pool as ThreadPool
 from core.checker import *
 from core.database_engine import *
 
-hosts = [['1', 'Router V1', 'Routers', 'Opis', '192.168.202.1', '2', 'Password', 'Admin', 'authPriv', 'MD5', 'Password',
-          'DES', 'Password', True, False, False, 'FastEthernet0/1,FastEthernet0/0', True, False],
-         ['2', 'Router V2', 'Routers', 'Opis asdasd', '192.168.202.1', '2', 'Password', 'Admin', 'authPriv', 'MD5',
-          'Password', 'DES', 'Password', True, False, False, 'FastEthernet0/1,FastEthernet0/0', True, True]]
+# hosts = [['1', 'Router V1', 'Routers', 'Opis', '192.168.202.1', '2', 'Password', 'Admin', 'authPriv', 'MD5', 'Password',
+#           'DES', 'Password', True, False, False, 'FastEthernet0/1,FastEthernet0/0', True, False],
+#          ['2', 'Router V2', 'Routers', 'Opis asdasd', '192.168.202.1', '2', 'Password', 'Admin', 'authPriv', 'MD5',
+#           'Password', 'DES', 'Password', True, False, False, 'FastEthernet0/1,FastEthernet0/0', True, True]]
 
 
 class CheckEngine:
@@ -53,11 +53,17 @@ class CheckEngine:
             services_state.append(check.fan_status())
         else:
             services_state.append("")
+        if host[17] is True or host[17] is '1':
+            services_state.append(check.cpu_utilization())
+            #print(type(check.cpu_utilization()))
+        else:
+            services_state.append("")
         #print("====")
         #print(services_state)
         add_to_database = ServicesState(host_id=host_id, date=date, ping=str(services_state[0]),
                                         interface=str(services_state[1]), uptime=str(services_state[2]),
-                                        chassis_temperature=str(services_state[3]), fan_status=str(services_state[4]))
+                                        chassis_temperature=str(services_state[3]), fan_status=str(services_state[4]),
+                                        cpu_utilization=str(services_state[5]))
         #print(str(services_state[2]))
         session = scoped_session(session_factory)
         session = session()

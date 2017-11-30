@@ -23,5 +23,10 @@
       "name":"Fan status",
       "warning":"5",
       "critical":"10"
+    },
+    "cpu_utilization": {
+      "name":"CPU utilization",
+      "warning":"50",
+      "critical":"80"
     }
 }

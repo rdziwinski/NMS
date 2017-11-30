@@ -9,6 +9,8 @@ class Database(Host, ServicesState):
         return session
 
     def add_host(self, data, category, erase):  # dodac obsluge bledu jak juz jest host dodany UNIQUE
+        print(data)
+        print(len(data))
         session = scoped_session(session_factory)
         session = session()
         session.rollback()
@@ -20,7 +22,7 @@ class Database(Host, ServicesState):
         for i in range(1, len(data[1])):
             host = Host(data[0][i], category, data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
                         data[7][i], data[8][i], data[9][i], data[10][i], data[11][i], data[12][i],
-                        data[13][i], data[14][i], data[15][i])
+                        data[13][i], data[14][i], data[15][i], data[16][i])
             session.add(host)
             session.commit()
             session.rollback()
@@ -54,6 +56,7 @@ class Database(Host, ServicesState):
                 one_host.append(host.uptime)
                 one_host.append(host.chassis_temperature)
                 one_host.append(host.fan_status)
+                one_host.append(host.cpu_utilization)
                 one_host.append(host.is_on)
                 database.append(one_host)
                 one_host = []
@@ -78,6 +81,7 @@ class Database(Host, ServicesState):
             one_host.append(host.uptime)
             one_host.append(host.chassis_temperature)
             one_host.append(host.fan_status)
+            one_host.append(host.cpu_utilization)
             one_host.append(host.is_on)
         return one_host
 
@@ -112,6 +116,7 @@ class Database(Host, ServicesState):
             one_check.append(check.uptime)
             one_check.append(check.chassis_temperature)
             one_check.append(check.fan_status)
+            one_check.append(check.cpu_utilization)
             database.append(one_check)
             one_check = []
         return database

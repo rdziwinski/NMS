@@ -90,7 +90,7 @@ class Checker():
             snmp_get = self.session.get(oid)
             number = snmp_get.value
             status = {
-                1: "Up|1",
+                1: "Up|0",
                 2: "Down|2",
                 3: "Testing|1",
                 4: "Unknown|1",
@@ -161,7 +161,7 @@ class Checker():
         interface_list = interfaces.split(",")
         for int in interface_list:
             int_status = self.interface_status(int)
-            if int_status is "Up|1":
+            if int_status == "Up|0":
                 int_utilization = self.interface_utilization(int)
                 interfaces_results.append(int_utilization)
             else:
@@ -187,7 +187,6 @@ class Checker():
             interfaces.append(item.value)
             if_index.append(item.oid.split(".")[-1])
         interfaces_dict = dict(zip(interfaces, if_index))
-        #return interfaces_dict
         return collections.OrderedDict(sorted(interfaces_dict.items(), key=lambda t: t[1]))
 
     def interface_address(self, if_index):
@@ -199,17 +198,6 @@ class Checker():
                 temp.insert(3, '.')
                 temp.insert(5, '.')
                 return ''.join(temp)
-
-    # def interface_info(self, interface):
-    #     if_index = self.interface_select(interface)
-    #
-    #     if if_index == 0:
-    #         return 0
-    #     else:
-    #         oid = '1.3.6.1.2.1.31.1.1.1.18.' + str(if_index)
-    #         snmp_get = self.session.get(oid)
-    #         print(snmp_get)
-    #         return snmp_get.value
 
     def chassis_temperature(self):
         stan = '0'
@@ -254,4 +242,25 @@ class Checker():
         result = snmp_get.value + "|" + stan
         return result
 
+    def cpu_utilization(self):
+        cpu = []
+        cpu_utilization = []
+        items = self.session.walk('1.3.6.1.4.1.9.9.109.1.1.1.1.4')
+        i = 0
+        for item in items:
+            cpu.append("CPU " + str(i))
+            if int(item.value) > int(self.settings.get_record('cpu_utilization', "critical")):
+                cpu_utilization.append(item.value + " %|2")
+            elif int(item.value) > int(self.settings.get_record('cpu_utilization', "warning")):
+                cpu_utilization.append(item.value + " %|1")
+            else:
+                cpu_utilization.append(item.value + " %|0")
+        dictionary = dict(zip(cpu, cpu_utilization))
+        return dictionary
 
+
+#
+# dane = [2,	'Router',"ad", 'in admin room','192.168.202.1','2','Password']
+#
+# check = Checker(dane)
+# print(check.uptime())
