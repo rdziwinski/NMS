@@ -3,22 +3,18 @@ from core.checker import *
 from multiprocessing.dummy import Pool as ThreadPool
 
 
-class ShowHost(ShowStatus):
-
-    def __init__(self, id):
-        self.id = id
-
-    def get_data(self):
+class ShowHost(DatabaseEngine):
+    def get_data(self, id):
         data = []
-        data.append(self.get_name(self.id))
-        data.append(self.get_address(self.id))
-        data.append(self.get_description(self.id))
-        data.append(self.get_ping(self.id))
+        data.append(self.get_name(id))
+        data.append(self.get_address(id))
+        data.append(self.get_description(id))
+        data.append(self.get_ping(id))
         return data
 
-    def get_interfaces(self):
+    def get_interfaces(self, id):
         data = []
-        host = Database().get_hosts(0, self.id)
+        host = DatabaseEngine().get_hosts(0, id)
         check_result = Checker(host)
         interfaces = check_result.all_interfaces()
         for int, if_index in interfaces.items():

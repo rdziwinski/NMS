@@ -1,10 +1,8 @@
 from core.database_engine import *
-import ast
 import json
-import datetime
 
 
-class ShowStatus():
+class ShowStatus(DatabaseEngine):
 
     def get_host_id(self):
         session = scoped_session(session_factory)
@@ -13,16 +11,8 @@ class ShowStatus():
         result = []
         for item in query:
             result.append(item[0])
+        session.rollback()
         return result
-
-    # def get_json(self, field):
-    #     result = []
-    #     if field is not "":
-    #         temp = str(field).replace("'", '"')
-    #         temp = json.loads(temp)
-    #         for key in temp:
-    #             result.append({key: temp[key]})
-    #     return result
 
     def append_service(self, service_name, service, type):  # bedzie zwracac to co potem trzeba services.append
         if service is not "":
@@ -39,57 +29,57 @@ class ShowStatus():
                     result.append([key, temp2[0], temp2[1]])
                 return result
 
-    def get_name(self, id):
-        session = Database().connect()
-        return session.query(Host.name).filter_by(id=id).first()[0]
+    # def get_name(self, id):
+    #     session = DatabaseEngine().connect()
+    #     return session.query(Host.name).filter_by(id=id).first()[0]
+    #
+    # def get_address(self, id):
+    #     session = DatabaseEngine().connect()
+    #     return session.query(Host.address).filter_by(id=id).first()[0]
+    #
+    # def get_description(self, id):
+    #     session = DatabaseEngine().connect()
+    #     return session.query(Host.description).filter_by(id=id).first()[0]
+    #
+    # def get_date(self, id):
+    #     session = DatabaseEngine().connect()
+    #     return session.query(Check).filter_by(host_id=id).order_by(Check.date.desc()).first().date
 
-    def get_address(self, id):
-        session = Database().connect()
-        return session.query(Host.address).filter_by(id=id).first()[0]
 
-    def get_description(self, id):
-        session = Database().connect()
-        return session.query(Host.description).filter_by(id=id).first()[0]
+    #
+    # def get_uptime(self, id):
+    #     session = DatabaseEngine().connect()
+    #     uptime = session.query(Check).filter_by(host_id=id).order_by(Check.date.desc()).first().uptime
+    #     if uptime:
+    #         return self.append_service("Uptime", uptime, "list")
+    #
+    # def get_interface(self, id):
+    #     session = DatabaseEngine().connect()
+    #     interface = session.query(Check).filter_by(host_id=id).order_by(Check.date.desc()).first().interface
+    #     if interface:
+    #         return self.append_service("", interface, "dict")
+    #
+    # def get_chassis_temperature(self, id):
+    #     session = DatabaseEngine().connect()
+    #     chassis_temperature = session.query(Check).filter_by(host_id=id).order_by(Check.date.desc()).first().chassis_temperature
+    #     if chassis_temperature:
+    #         return self.append_service("Chassis Temp", chassis_temperature, "list")
+    #
+    # def get_fan_status(self, id):
+    #     session = DatabaseEngine().connect()
+    #     fan_status = session.query(Check).filter_by(host_id=id).order_by(Check.date.desc()).first().fan_status
+    #     if fan_status:
+    #         return self.append_service("", fan_status, "dict")
+    #
+    # def get_cpu_utilization(self, id):
+    #     session = DatabaseEngine().connect()
+    #     cpu_utilization = session.query(Check).filter_by(host_id=id).order_by(Check.date.desc()).first().cpu_utilization
+    #     if cpu_utilization:
+    #         return self.append_service("", cpu_utilization, "dict")
 
-    def get_date(self, id):
-        session = Database().connect()
-        return session.query(ServicesState).filter_by(host_id=id).order_by(ServicesState.date.desc()).first().date
 
-    def get_ping(self, id):
-        session = Database().connect()
-        ping = session.query(ServicesState).filter_by(host_id=id).order_by(ServicesState.date.desc()).first().ping
-        if ping:
-            return self.append_service("RTT", ping, "list")
+## ^^ w database engine
 
-    def get_uptime(self, id):
-        session = Database().connect()
-        uptime = session.query(ServicesState).filter_by(host_id=id).order_by(ServicesState.date.desc()).first().uptime
-        if uptime:
-            return self.append_service("Uptime", uptime, "list")
-
-    def get_interface(self, id):
-        session = Database().connect()
-        interface = session.query(ServicesState).filter_by(host_id=id).order_by(ServicesState.date.desc()).first().interface
-        if interface:
-            return self.append_service("", interface, "dict")
-
-    def get_chassis_temperature(self, id):
-        session = Database().connect()
-        chassis_temperature = session.query(ServicesState).filter_by(host_id=id).order_by(ServicesState.date.desc()).first().chassis_temperature
-        if chassis_temperature:
-            return self.append_service("chassis_temperature", chassis_temperature, "list")
-
-    def get_fan_status(self, id):
-        session = Database().connect()
-        fan_status = session.query(ServicesState).filter_by(host_id=id).order_by(ServicesState.date.desc()).first().fan_status
-        if fan_status:
-            return self.append_service("", fan_status, "dict")
-
-    def get_cpu_utilization(self, id):
-        session = Database().connect()
-        cpu_utilization = session.query(ServicesState).filter_by(host_id=id).order_by(ServicesState.date.desc()).first().cpu_utilization
-        if cpu_utilization:
-            return self.append_service("", cpu_utilization, "dict")
 
     def get_host_data(self, id):
         host_data = []
@@ -101,7 +91,7 @@ class ShowStatus():
         session = session()
         services = []
 
-        if session.query(ServicesState).first() is None:
+        if session.query(Check).first() is None:
             return 0
 
         uptime = self.get_uptime(id)
@@ -112,17 +102,17 @@ class ShowStatus():
         cpu_utilization = self.get_cpu_utilization(id)
 
         if ping:
-            services.append(ping)
+            services.append(self.append_service("RTT", ping, "list"))
         if interface:
-            services.extend(interface)
+            services.extend(self.append_service("", interface, "dict"))
         if fan_status:
-            services.extend(fan_status)
+            services.extend(self.append_service("", fan_status, "dict"))
         if cpu_utilization:
-            services.extend(cpu_utilization)
+            services.extend(self.append_service("", cpu_utilization, "dict"))
         if uptime:
-            services.append(uptime)
+            services.append(self.append_service("Uptime", uptime, "list"))
         if chassis_temperature:
-            services.append(chassis_temperature)
+            services.append(self.append_service("Chassis Temp", chassis_temperature, "list"))
         if all == 0:
             services = [item for item in services if item[2] != '0']
         return services

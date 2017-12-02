@@ -9,7 +9,7 @@ class RunEngine:
     def __init__(self, interval=1, run=1):
         while run:
             engine = CheckEngine()
-            hosts = Database().get_hosts()
+            hosts = DatabaseEngine().get_hosts()
             pool = ThreadPool(32)
             try:
                 pool.map(engine.run, hosts)

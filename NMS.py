@@ -62,7 +62,7 @@ def admin_hp():
         elif import_category.is_empty() == 1:
             error = import_category.print_errors()
         else:
-            if Database().add_host(import_category.print_file(), category, erase) == 1:
+            if DatabaseEngine().add_host(import_category.print_file(), category, erase) == 1:
                 error = 'Add to database failed.'
                 return render_template('settings.html', name="Administrator", error=error, current_settings=current_settings)
             success = "Import host successful"
@@ -73,27 +73,16 @@ def admin_hp():
 
 @app.route('/show_all', methods=['GET', 'POST'])
 def show_all():
-    database = Database().get_hosts()
+    database = DatabaseEngine().get_hosts()
     #print(database)
     return render_template('show_all.html', name="Hosts", database=database)
 
 
 @app.route('/show_services', methods=['GET', 'POST'])
 def show_services():
-    database = Database().show_services()
+    database = DatabaseEngine().get_checks()
     #print(database)
     return render_template('show_services.html', name="Checks", database=database)
-
-
-@app.route('/monitoring', methods=['GET', 'POST'])
-def monitoring():
-    engine = CheckEngine()
-    hosts = Database().get_hosts()
-    #print(hosts)
-    pool = ThreadPool(32)
-    pool.map(engine.run, hosts)
-   # Base.metadata.drop_all(engine)
-    return render_template('monitoring.html', name="Run")
 
 @app.route('/show_states_problems', methods=['GET', 'POST'])
 def show_states_problems():
@@ -107,17 +96,16 @@ def show_states_problems():
 
 @app.route('/host/<id>', methods=['GET', 'POST'])
 def show_host(id):
-    show = ShowHost(id)
+    show = ShowHost()
     show2 = ShowStatus()
-    host_data = show.get_data()
+    host_data = show.get_data(id)
     if host_data[3][2] != '2':
         services = show2.get_host_services(id, 1)
 
         if request.form.getlist('get_interfaces'):
-            interfaces = show.get_interfaces()
+            interfaces = show.get_interfaces(id)
             return render_template('show_host.html', name="Host", host_data=host_data, interfaces=interfaces,
                                    services=services)
-        interfaces = [['test', 'test', 'test', ['test', 'test']]]
         return render_template('show_host.html', name="Host", host_data=host_data, services=services)
     return render_template('show_host.html', name="Host", host_data=host_data, down=1)
 

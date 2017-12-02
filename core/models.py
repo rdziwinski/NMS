@@ -8,9 +8,6 @@ engine = create_engine('sqlite:////root/home/user/NMS/data/database.db', echo=Fa
 Base.metadata.create_all(engine)
 session_factory = sessionmaker(bind=engine, autocommit=False)
 
-# engine = create_engine('sqlite:///C:/Users/rdziw/Documents/Python/NMS/data/database_2.db', echo=True,
-#                        connect_args={'check_same_thread': False})
-
 class Host(Base):
     __tablename__ = 'hosts'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -60,8 +57,8 @@ class Host(Base):
         self.is_on = is_on
 
 
-class ServicesState(Base):
-    __tablename__ = 'services_state'
+class Check(Base):
+    __tablename__ = 'services_state' # poprawic przy tworzeniu nowej bazy danych
     id = Column(Integer, primary_key=True, autoincrement=True)
     host_id = Column(Integer)
     date = Column(DateTime)  # tu ma byc datetime
