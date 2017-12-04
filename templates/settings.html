@@ -5,7 +5,13 @@
 {% endblock %}
 {% block settings %}
 <div class="row" style="margin-top: 1rem">
-    <div class="col-12"><h1 class="h1">Settings</h1></div>
+    <div class="col-12">
+        <h1 class="h1">Settings</h1>
+        {% if installation %}
+        <p>You don't have any host in database. Please import some host to create database.
+        After this you have to run <code>run_engine.py</code> for staring check engine.</p>
+        {% endif %}
+    </div>
     <div class="col-12">
         {% if success %}
             <div class="alert alert-success" role="alert">
@@ -38,7 +44,10 @@
                 </div>
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="checkbox" class="form-check-input" name="erase" value="erase" title="erase">Drop all table
+                        <input type="checkbox" class="form-check-input" name="erase" value="erase_checks">Drop checks table
+                    </label>
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" name="erase" value="erase_hosts">Drop hosts table
                     </label>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>

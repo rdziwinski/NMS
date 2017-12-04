@@ -16,7 +16,7 @@ class UploadFile:
         self.category = ""
         self.error = ""
         if request.method == 'POST':
-            if 'file' not in request.files:  # check if the post request has the file part
+            if 'file' not in request.files:
                 self.error = "No file part"
                 return 1
             file = request.files['file']

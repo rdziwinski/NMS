@@ -8,6 +8,7 @@ engine = create_engine('sqlite:////root/home/user/NMS/data/database.db', echo=Fa
 Base.metadata.create_all(engine)
 session_factory = sessionmaker(bind=engine, autocommit=False)
 
+
 class Host(Base):
     __tablename__ = 'hosts'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -20,9 +21,9 @@ class Host(Base):
     security_name = Column(String(30))
     security_level = Column(String(30))
     auth_protocol = Column(String(30))
-    priv_key = Column(String(30))
-    priv_protocol = Column(String(30))
     auth_key = Column(String(30))
+    priv_protocol = Column(String(30))
+    priv_key = Column(String(30))
     interface = Column(String(255))
     uptime = Column(String(30))
     chassis_temperature = Column(Boolean)
@@ -35,7 +36,7 @@ class Host(Base):
             self.name, self.category, self.description)
 
     def __init__(self, name="",  category="", description="", address="", snmp_version="", community="", security_name="",
-                 security_level="", auth_protocol="", priv_key="", priv_protocol="", auth_key="", interface="", uptime="",
+                 security_level="", auth_protocol="", auth_key="",  priv_protocol="", priv_key="", interface="", uptime="",
                  chassis_temperature="", fan_status="", cpu_utilization="", is_on=""):
         self.name = name
         self.category = category
@@ -46,9 +47,9 @@ class Host(Base):
         self.security_name = security_name
         self.security_level = security_level
         self.auth_protocol = auth_protocol
-        self.priv_key = priv_key
-        self.priv_protocol = priv_protocol
         self.auth_key = auth_key
+        self.priv_protocol = priv_protocol
+        self.priv_key = priv_key
         self.interface = interface
         self.uptime = uptime
         self.chassis_temperature = chassis_temperature
@@ -58,7 +59,7 @@ class Host(Base):
 
 
 class Check(Base):
-    __tablename__ = 'services_state' # poprawic przy tworzeniu nowej bazy danych
+    __tablename__ = 'checks'
     id = Column(Integer, primary_key=True, autoincrement=True)
     host_id = Column(Integer)
     date = Column(DateTime)  # tu ma byc datetime

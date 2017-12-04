@@ -1,18 +1,10 @@
-# Router interface: 192.168.202.1
-# Windows interface: 192.168.202.1
-# Linux interface: 192.168.202.3
-# Project files: /home/user/checker
 from easysnmp import Session
 from datetime import timedelta
-import ast
 import os
 import time
-import subprocess
-import datetime as czas
-import json
-from core.file_json import *
 import collections
 from core.file_json import *
+
 
 class Checker():
     def __init__(self, host):
@@ -21,27 +13,20 @@ class Checker():
             self.session = Session(hostname=host[4], version=2, community=host[6])
         elif host[5] == '3':
             self.session = Session(hostname=host[4], version=3, security_username=host[7], security_level=host[8],
-                                   privacy_protocol=host[9], privacy_password=host[10], auth_protocol=host[11],
-                                   auth_password=host[12])
+                                   auth_protocol=host[9], auth_password=host[10], privacy_protocol=host[11],
+                                   privacy_password=host[12])
         self.settings = FIleJson("/root/home/user/NMS/data/services.json")
-
 
     def uptime(self):  # 0 - OK, 1 - warn, 2 - Crit
         stan = "0"
         snmp_get = self.session.get('1.3.6.1.2.1.1.3.0')
         hundredths_sec = int(snmp_get.value)
-       # print(hundredths_sec)
-        # sec = int((hundredths_sec / 100) % 60)
         min = int((hundredths_sec / (100 * 60)))
-        # hours = int((hundredths_sec / (100 * 60 * 60)) % 24)
-        # result = "%02d:%02d:%02d" % (hours, min, sec)
         date = timedelta(microseconds=hundredths_sec*1e4)
-
-        if min < int(self.settings.get_record('uptime', "critical")): # dziala
+        if min < int(self.settings.get_record('uptime', "critical")):
             stan = '2'
         elif min < int(self.settings.get_record('uptime', "warning")):
             stan = '1'
-
         uptime = str(date).split(".")[0]
         result = uptime + "|" + stan
         return result
@@ -82,7 +67,6 @@ class Checker():
 
     def interface_status(self, interface):
         if_index = self.interface_select(interface)
-
         if if_index == 0:
             return "Interface not found|1"
         else:
@@ -100,10 +84,8 @@ class Checker():
             }
             status = status.get(int(number), "error")
             return status
-            #return_string = interface + ": " + status
-            #return return_string
 
-    def interface_utilization(self, interface, seconds=2): # tu mozna dodac ustawienie
+    def interface_utilization(self, interface, seconds=2):
         if_index = self.interface_select(interface)
 
         if if_index == 0:
@@ -111,7 +93,6 @@ class Checker():
 
         def get_if_speed():
             oid = '1.3.6.1.2.1.2.2.1.5.' + str(if_index)
-
             snmp_get = self.session.get(oid)
             if_speed = snmp_get.value
             return if_speed
@@ -123,24 +104,16 @@ class Checker():
             elif direction == "output":
                 oid = '1.3.6.1.2.1.2.2.1.16.' + str(if_index)
             snmp_get = self.session.get(oid)
-
             start_time = time.time()
-
             if_in_octets_start = snmp_get.value
-
             time.sleep(seconds)
-
             stop_time = time.time()
             time_delta = stop_time - start_time
             snmp_get = self.session.get(oid)
             if_in_octets_stop = snmp_get.value
             delta_if_in_octets = int(if_in_octets_stop) - int(if_in_octets_start)
             if_speed = get_if_speed()
-
             utilization = (delta_if_in_octets*8*100)/(time_delta*int(if_speed))
-            # print(if_in_octets_start)
-            # print(if_in_octets_stop)
-            # print(delta_if_in_octets)
             return utilization
 
         stan = "0"
@@ -149,11 +122,12 @@ class Checker():
         mbits = int(get_if_speed())/1e6
         input_percent = input/mbits
         output_percent = output/mbits
-        if (input_percent or output_percent) > 50:
+        if (input_percent or output_percent) > int(self.settings.get_record('interface', "critical")):
             stan = "2"
-        elif (input_percent or output_percent) > 30:
+        elif (input_percent or output_percent) > int(self.settings.get_record('interface', "warning")):
             stan = "1"
-        result = "Input: " + str(input) + " Mbps (" + str(round(input_percent, 2)) + " %); Output " + str(output) + " Mbps (" + str(round(output_percent, 2)) + " %)|"
+        result = "Input: " + str(input) + " Mbps (" + str(round(input_percent, 2)) + " %); Output " +\
+                 str(output) + " Mbps (" + str(round(output_percent, 2)) + " %)|"
         return result + stan
 
     def interface(self, interfaces):
@@ -171,7 +145,6 @@ class Checker():
 
     def interface_description(self, interface):
         if_index = self.interface_select(interface)
-
         if if_index == 0:
             return 0
         else:
@@ -202,15 +175,14 @@ class Checker():
     def chassis_temperature(self):
         stan = '0'
         snmp_get = self.session.get('1.3.6.1.4.1.9.9.13.1.3.1.3.1')
-        if snmp_get.value == "NOSUCHINSTANCE":
+        if snmp_get.value == "Oid not found":
             return "No such instance|1"
 
-        if int(snmp_get.value) > 20:
-            stan = '1'
-        elif int(snmp_get.value) > 30:
+        if int(snmp_get.value) > int(self.settings.get_record('chassis_temperature', "critical")):
             stan = '2'
+        elif int(snmp_get.value) > int(self.settings.get_record('chassis_temperature', "warning")):
+            stan = '1'
         temperature = snmp_get.value + " °C|" + stan
-        # result = {"Chassis  temperatur": temperature}
         return temperature
 
     def fan_status(self):
@@ -257,10 +229,3 @@ class Checker():
                 cpu_utilization.append(item.value + " %|0")
         dictionary = dict(zip(cpu, cpu_utilization))
         return dictionary
-
-
-#
-# dane = [2,	'Router',"ad", 'in admin room','192.168.202.1','2','Password']
-#
-# check = Checker(dane)
-# print(check.uptime())

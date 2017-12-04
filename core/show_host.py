@@ -1,15 +1,15 @@
 from core.show_status import *
 from core.checker import *
-from multiprocessing.dummy import Pool as ThreadPool
 
 
-class ShowHost(DatabaseEngine):
+class ShowHost(ShowStatus):
     def get_data(self, id):
         data = []
         data.append(self.get_name(id))
         data.append(self.get_address(id))
         data.append(self.get_description(id))
-        data.append(self.get_ping(id))
+        ping = self.get_ping(id)
+        data.append(self.append_service("RTT", ping, "list"))
         return data
 
     def get_interfaces(self, id):

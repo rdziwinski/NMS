@@ -1,14 +1,10 @@
 from openpyxl import load_workbook
 import os
-from flask import Flask
-import json
 
 
 class Xlsx():
     def __init__(self, file_name):
-
         self.file_name = file_name
-
         wb = load_workbook(filename=os.path.dirname(os.path.abspath(__file__)) + "/" + file_name, read_only=True)
         ws = wb.worksheets[0]
         self.max_col = ws.max_column
@@ -30,8 +26,7 @@ class Xlsx():
         if self.result != []:
             first_row = []
             pattern = ['name', 'description', 'address', 'snmp_version', 'community', 'security_name',
-                       'security_level', 'auth_protocol', 'priv_key', 'priv_protocol', 'auth_key',
-                       ]
+                       'security_level', 'auth_protocol', 'auth_key', 'priv_protocol', 'priv_key']
             for i in range(self.max_col):
                 first_row.append(self.result[i][0])
             if first_row != pattern:
@@ -69,21 +64,3 @@ class Xlsx():
                     row_number3 = i + 1
                     is_empty.append(col_name3 + " is empty in " + str(row_number3) + ". row.")
         return is_empty
-
-
-# Routers = Xlsx("hosts.xlsx")
-# result = Routers.is_empty()
-# print(result)
-
-# print(temp)
-# if result == []:
-#     print("Wszystko jest")
-# else:
-#     for i in result:
-#         print(i)
-
-
-# for i in range(max_row-1):
-#     host = Host(name=data[0][i], description=data[1][i], address=data[2][i], snmp_version=data[3][i], community=data[4][i],
-#          security_name=data[5][i], security_level=data[6][i], auth_protocol=data[7][i], priv_key=data[8][i],
-#          priv_protocol=data[9][i], auth_key=data[10][i]).add()

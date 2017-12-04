@@ -3,19 +3,29 @@
 {% block head %}
 {{ super() }}
 {% endblock %}
-{% block show_all %}
+{% block hosts %}
 <table class="table">
     <thead>
         <tr>
             <th scope="col">Id</th>
-            <th scope="col">Host id</th>
-            <th scope="col">Last check time</th>
-            <th scope="col">RTT</th>
+            <th scope="col">Name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Description</th>
+            <th scope="col">IP address</th>
+            <th scope="col">SNMP version</th>
+            <th scope="col">Community</th>
+            <th scope="col">Security name</th>
+            <th scope="col">Security level</th>
+            <th scope="col">Auth protocol</th>
+            <th scope="col">Priv key</th>
+            <th scope="col">Priv protocol</th>
+            <th scope="col">Auth key</th>
             <th scope="col">Interfaces</th>
             <th scope="col">Uptime</th>
-            <th scope="col">Chassis</th>
+            <th scope="col">Chassis temperature</th>
             <th scope="col">Fan status</th>
             <th scope="col">CPU</th>
+            <th scope="col">On/Off</th>
         </tr>
     </thead>
     <tbody>

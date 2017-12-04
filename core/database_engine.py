@@ -7,9 +7,12 @@ class DatabaseEngine():
         session = scoped_session(session_factory)
         self.session = session()
 
-    def connect(self):
-        session = scoped_session(session_factory)
-        return session()
+    def get_host_id(self):
+        result = []
+        query = self.session.query(Host.id).filter_by(is_on=1)
+        for item in query:
+            result.append(item[0])
+        return result
 
     def get_name(self, id):
         return self.session.query(Host.name).filter_by(id=id).first()[0]
@@ -41,16 +44,14 @@ class DatabaseEngine():
     def get_cpu_utilization(self, id):
         return self.session.query(Check).filter_by(host_id=id).order_by(Check.date.desc()).first().cpu_utilization
 
-
-
-
-
-    def add_host(self, data, category, erase):  # dodac obsluge bledu jak juz jest host dodany UNIQUE
+    def add_host(self, data, category, erase):
         session = scoped_session(session_factory)
         session = session()
-        session.rollback()
-        if erase == ['erase']:
-            Base.metadata.drop_all(engine)  # Host.__table__.drop(engine)
+        if erase == ['erase_checks']:
+            Check.__table__.drop(engine)
+        elif erase == ['erase_hosts']:
+            Host.__table__.drop(engine)
+           #  Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
         for i in range(1, len(data[1])):
             host = Host(data[0][i], category, data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
@@ -69,8 +70,9 @@ class DatabaseEngine():
         if all == 1:
             hosts = session.query(Host).all()
         elif all == 0:
-            hosts = session.query(Host).filter_by(id=id).first()
+            hosts.append(session.query(Host).filter_by(id=id).first())
         for host in hosts:
+            one_host = []
             one_host.append(host.id)
             one_host.append(host.name)
             one_host.append(host.category)
@@ -81,9 +83,9 @@ class DatabaseEngine():
             one_host.append(host.security_name)
             one_host.append(host.security_level)
             one_host.append(host.auth_protocol)
-            one_host.append(host.priv_key)
-            one_host.append(host.priv_protocol)
             one_host.append(host.auth_key)
+            one_host.append(host.priv_protocol)
+            one_host.append(host.priv_key)
             one_host.append(host.interface)
             one_host.append(host.uptime)
             one_host.append(host.chassis_temperature)
@@ -91,8 +93,11 @@ class DatabaseEngine():
             one_host.append(host.cpu_utilization)
             one_host.append(host.is_on)
             database.append(one_host)
-            one_host = []
-        return database
+        if all == 1:
+            return database
+        elif all == 0:
+            print(one_host)
+            return one_host
 
     def get_checks(self):
         one_check = []

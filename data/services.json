@@ -19,11 +19,6 @@
       "warning":"5",
       "critical":"10"
     },
-    "fan_status": {
-      "name":"Fan status",
-      "warning":"5",
-      "critical":"10"
-    },
     "cpu_utilization": {
       "name":"CPU utilization",
       "warning":"50",

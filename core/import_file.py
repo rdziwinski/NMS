@@ -8,13 +8,12 @@ class ImportFile:
         self.category = category
 
     def open_file(self):
-        # pewnie bedzie problem ze sciezka do pliku
         app_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', ''))
         upload_folder = os.path.join(app_root, 'data')
         wb = load_workbook(filename=os.path.join(upload_folder, self.file_name), read_only=True)
         try:
             ws = wb[self.category]
-            self.ws = ws  # Field ws: one of sheet
+            self.ws = ws
             return self.ws
         except KeyError:
             if self.category == "":
@@ -27,10 +26,8 @@ class ImportFile:
     def read_file(self):
         max_col = self.ws.max_column
         max_row = self.ws.max_row
-
         file_data = []
-        self.file_data = file_data  # Field file_data: content of file
-
+        self.file_data = file_data
         for i in range(1, max_col + 1):
             temp = []
             for j in range(1, max_row + 1):
