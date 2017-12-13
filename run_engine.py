@@ -3,11 +3,18 @@ from core.check_engine import CheckEngine
 from core.show_status import *
 import time
 import easysnmp
+import threading
 
 
-class RunEngine:
-    def __init__(self, interval=1, run=1):
-        while run:
+class RunEngine(object):
+    def __init__(self, interval=1):
+        self.interval = interval
+        thread = threading.Thread(target=self.run, args=())
+        thread.daemon = True                            # Daemonize thread
+        thread.start()                                  # Start the execution
+
+    def run(self):
+        while True:
             engine = CheckEngine()
             hosts = DatabaseEngine().get_hosts()
             pool = ThreadPool(32)
@@ -15,7 +22,4 @@ class RunEngine:
                 pool.map(engine.run, hosts)
             except easysnmp.exceptions.EasySNMPTimeoutError:
                 pool.map(engine.run, hosts)
-
-            time.sleep(interval)
-
-RunEngine(1)
+            time.sleep(self.interval)

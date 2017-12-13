@@ -6,7 +6,7 @@ import easysnmp
 
 class CheckEngine:
     def run(self, host):
-        if host[17] is True:
+        if host[18] is True:
             check = Checker(host)
             host_id = host[0]
             date = datetime.datetime.now()

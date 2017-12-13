@@ -6,7 +6,7 @@ from core.upload_file import UploadFile
 from core.check_engine import *
 from sqlalchemy.exc import OperationalError
 from multiprocessing.dummy import Pool as ThreadPool
-
+from run_engine import *
 app = Flask(__name__)
 
 
@@ -66,8 +66,9 @@ def settings():
             success = "Import host successful"
             engine = CheckEngine()
             hosts = DatabaseEngine().get_hosts()
-            pool = ThreadPool(32)
+            pool = ThreadPool(16)
             pool.map(engine.run, hosts)
+            RunEngine(5)
     return render_template('settings.html', name="Administrator", error=error,
                            success=success, current_settings=current_settings)
 

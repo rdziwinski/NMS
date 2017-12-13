@@ -25,7 +25,7 @@ class Host(Base):
     priv_protocol = Column(String(30))
     priv_key = Column(String(30))
     interface = Column(String(255))
-    uptime = Column(String(30))
+    uptime = Column(Boolean)
     chassis_temperature = Column(Boolean)
     fan_status = Column(Boolean)
     cpu_utilization = Column(Boolean)

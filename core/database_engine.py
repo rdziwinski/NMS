@@ -51,7 +51,9 @@ class DatabaseEngine():
             Check.__table__.drop(engine)
         elif erase == ['erase_hosts']:
             Host.__table__.drop(engine)
-           #  Base.metadata.drop_all(engine)
+        elif erase == ['erase_checks', 'erase_hosts']:
+            Host.__table__.drop(engine)
+            Check.__table__.drop(engine)
         Base.metadata.create_all(engine)
         for i in range(1, len(data[1])):
             host = Host(data[0][i], category, data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
