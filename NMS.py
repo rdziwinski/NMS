@@ -1,20 +1,19 @@
 from flask import render_template, request, Flask, redirect, url_for
+from sqlalchemy.exc import OperationalError
 from core.import_host import ImportHost
+from core.run_engine import *
 from core.settings import *
 from core.show_host import *
 from core.upload_file import UploadFile
-from core.check_engine import *
-from sqlalchemy.exc import OperationalError
-from multiprocessing.dummy import Pool as ThreadPool
-from run_engine import *
+
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def hosts_states():
     try:
         all_states = ShowStatus()
-        database = all_states.run(1)
+        database = all_states.run(0)
     except OperationalError:
         return redirect(url_for('settings'))
     return render_template('hosts_states.html', name="Home", database=database)
@@ -73,22 +72,22 @@ def settings():
                            success=success, current_settings=current_settings)
 
 
-@app.route('/hosts', methods=['GET', 'POST'])
+@app.route('/hosts', methods=['GET'])
 def hosts():
     database = DatabaseEngine().get_hosts()
     return render_template('hosts.html', name="Hosts", database=database)
 
 
-@app.route('/checks', methods=['GET', 'POST'])
+@app.route('/checks', methods=['GET'])
 def checks():
     database = DatabaseEngine().get_checks()
     return render_template('checks.html', name="Checks", database=database)
 
 
-@app.route('/problems', methods=['GET', 'POST'])
+@app.route('/problems', methods=['GET'])
 def problems():
     all_states = ShowStatus()
-    database = all_states.run(0)
+    database = all_states.run(1)
     if database[0] == 0:
         return redirect(url_for('settings'))
     return render_template('hosts_states.html', name="Home", database=database)
@@ -101,7 +100,7 @@ def host(id):
     host_data = host.get_data(id)
     print(host_data)
     if host_data[3][2] != '2':
-        services = services.get_host_services(id, 1)
+        services = services.get_host_services(id, 0)
         if request.form.getlist('get_interfaces'):
             interfaces = host.get_interfaces(id)
             return render_template('host.html', name="Host", host_data=host_data, interfaces=interfaces,

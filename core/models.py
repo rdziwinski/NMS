@@ -31,10 +31,6 @@ class Host(Base):
     cpu_utilization = Column(Boolean)
     is_on = Column(Boolean)
 
-    def __repr__(self):
-        return "<User(name='%s', category='%s', description='%s')>" % (
-            self.name, self.category, self.description)
-
     def __init__(self, name="",  category="", description="", address="", snmp_version="", community="", security_name="",
                  security_level="", auth_protocol="", auth_key="",  priv_protocol="", priv_key="", interface="", uptime="",
                  chassis_temperature="", fan_status="", cpu_utilization="", is_on=""):

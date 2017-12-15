@@ -9,7 +9,7 @@ class ShowHost(ShowStatus):
         data.append(self.get_address(id))
         data.append(self.get_description(id))
         ping = self.get_ping(id)
-        data.append(self.append_service("RTT", ping, "list"))
+        data.append(self.append_service(ping, "list", "RTT"))
         return data
 
     def get_interfaces(self, id):

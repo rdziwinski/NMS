@@ -3,15 +3,15 @@ import json
 
 
 class ShowStatus(DatabaseEngine):
-    def append_service(self, service_name, service, type):
-        if service is not "":
+    def append_service(self, status_data, type, service_name=""):
+        if status_data is not "":
             if type == 'list':
-                data = service.split("|")
+                data = status_data.split("|")
                 result = [service_name] + data
                 return result
             elif type == 'dict':
                 result = []
-                temp = str(service).replace("'", '"')
+                temp = str(status_data).replace("'", '"')
                 temp = json.loads(temp)
                 for key in sorted(temp):
                     temp2 = temp[key].split("|")
@@ -23,13 +23,8 @@ class ShowStatus(DatabaseEngine):
         host_data.extend((id, self.get_name(id), self.get_address(id), self.get_description(id), self.get_date(id)))
         return host_data
 
-    def get_host_services(self, id, all):
-        session = scoped_session(session_factory)
-        session = session()
+    def get_host_services(self, id, problems):
         services = []
-
-        if session.query(Check).first() is None:
-            return 0
 
         uptime = self.get_uptime(id)
         ping = self.get_ping(id)
@@ -39,25 +34,25 @@ class ShowStatus(DatabaseEngine):
         cpu_utilization = self.get_cpu_utilization(id)
 
         if ping:
-            services.append(self.append_service("RTT", ping, "list"))
+            services.append(self.append_service(ping, "list", "RTT"))
         if interface:
-            services.extend(self.append_service("", interface, "dict"))
+            services.extend(self.append_service(interface, "dict"))
         if fan_status:
-            services.extend(self.append_service("", fan_status, "dict"))
+            services.extend(self.append_service(fan_status, "dict"))
         if cpu_utilization:
-            services.extend(self.append_service("", cpu_utilization, "dict"))
+            services.extend(self.append_service(cpu_utilization, "dict"))
         if uptime:
-            services.append(self.append_service("Uptime", uptime, "list"))
+            services.append(self.append_service(uptime, "list", "Uptime"))
         if chassis_temperature:
-            services.append(self.append_service("Chassis Temp", chassis_temperature, "list"))
-        if all == 0:
+            services.append(self.append_service(chassis_temperature, "list", "Chassis Temp"))
+        if problems == 1:
             services = [item for item in services if item[2] != '0']
         return services
 
     def run(self, all):
         database = []
-        host_id = self.get_host_id()
-        for id in host_id:
+        hosts_id = self.get_hosts_id()
+        for id in hosts_id:
             temp = []
             temp.extend(self.get_host_data(id))
             temp.append(self.get_host_services(id, all))

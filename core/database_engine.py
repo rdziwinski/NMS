@@ -7,7 +7,7 @@ class DatabaseEngine():
         session = scoped_session(session_factory)
         self.session = session()
 
-    def get_host_id(self):
+    def get_hosts_id(self):
         result = []
         query = self.session.query(Host.id).filter_by(is_on=1)
         for item in query:
@@ -45,8 +45,6 @@ class DatabaseEngine():
         return self.session.query(Check).filter_by(host_id=id).order_by(Check.date.desc()).first().cpu_utilization
 
     def add_host(self, data, category, erase):
-        session = scoped_session(session_factory)
-        session = session()
         if erase == ['erase_checks']:
             Check.__table__.drop(engine)
         elif erase == ['erase_hosts']:
@@ -59,20 +57,18 @@ class DatabaseEngine():
             host = Host(data[0][i], category, data[1][i], data[2][i], data[3][i], data[4][i], data[5][i], data[6][i],
                         data[7][i], data[8][i], data[9][i], data[10][i], data[11][i], data[12][i],
                         data[13][i], data[14][i], data[15][i], data[16][i])
-            session.add(host)
-            session.commit()
-            session.rollback()
+            self.session.add(host)
+            self.session.commit()
+            self.session.rollback()
 
     def get_hosts(self, all=1, id=0):
         one_host = []
         database = []
         hosts = []
-        session = scoped_session(session_factory)
-        session = session()
         if all == 1:
-            hosts = session.query(Host).all()
+            hosts = self.session.query(Host).all()
         elif all == 0:
-            hosts.append(session.query(Host).filter_by(id=id).first())
+            hosts.append(self.session.query(Host).filter_by(id=id).first())
         for host in hosts:
             one_host = []
             one_host.append(host.id)
@@ -104,9 +100,7 @@ class DatabaseEngine():
     def get_checks(self):
         one_check = []
         database = []
-        session = scoped_session(session_factory)
-        session = session()
-        host_and_services = session.query(Check).order_by(desc(Check.id)).all()
+        host_and_services = self.session.query(Check).order_by(desc(Check.id)).all()
         for check in host_and_services:
             one_check.append(check.id)
             one_check.append(check.host_id)
