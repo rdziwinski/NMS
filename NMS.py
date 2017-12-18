@@ -25,20 +25,16 @@ def settings():
     success = ""
     upload_file = UploadFile('data', ['xlsx', 'jpg', 'txt'])
     path = os.path.dirname(os.path.abspath(__file__)) + "/data/services.json"
-    current_settings = FIleJson(path).read_file()
+    settings = Settings(path)
+    current_settings = settings.read_file()
     if 'file' not in request.files:
         new_settings = []
         new_settings.extend(request.form.getlist('key'))
         new_settings.extend(request.form.getlist('warning'))
         new_settings.extend(request.form.getlist('critical'))
         if new_settings:
-            settings = Settings()
-            data = settings.set_setting(current_settings, new_settings)
-            with open(path, 'w') as f:
-                json.dump(data, f)
-            success = "Change settings successfully"
-        return render_template('settings.html', name="Administrator",
-                               current_settings=current_settings, success=success)
+            success = settings.write_file(path, settings.set_setting(current_settings, new_settings))
+        return render_template('settings.html', name="Administrator", current_settings=current_settings, success=success)
     if upload_file.upload_file() == 1:
         error = upload_file.print_errors()
     else:
@@ -65,7 +61,7 @@ def settings():
             success = "Import host successful"
             engine = CheckEngine()
             hosts = DatabaseEngine().get_hosts()
-            pool = ThreadPool(16)
+            pool = ThreadPool(128)
             pool.map(engine.run, hosts)
             RunEngine(5)
     return render_template('settings.html', name="Administrator", error=error,

@@ -2,7 +2,7 @@ from core.models import *
 from sqlalchemy import desc
 
 
-class DatabaseEngine():
+class DatabaseEngine:
     def __init__(self):
         session = scoped_session(session_factory)
         self.session = session()

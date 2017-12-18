@@ -2,7 +2,7 @@ from openpyxl import load_workbook
 import os
 
 
-class ImportHost():
+class ImportHost:
     def __init__(self, file_name, category):
         self.file_name = file_name
         self.category = category

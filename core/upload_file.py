@@ -29,7 +29,6 @@ class UploadFile:
             if file:
                 app_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', ''))
                 self.upload_folder = os.path.join(app_root, self.upload_folder)
-
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(self.upload_folder, filename))
                 self.file_name = filename

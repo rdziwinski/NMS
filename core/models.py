@@ -58,7 +58,7 @@ class Check(Base):
     __tablename__ = 'checks'
     id = Column(Integer, primary_key=True, autoincrement=True)
     host_id = Column(Integer)
-    date = Column(DateTime)  # tu ma byc datetime
+    date = Column(DateTime)
     ping = Column(String(30))
     interface = Column(String(255))
     uptime = Column(String(30))

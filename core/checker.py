@@ -3,10 +3,10 @@ from datetime import timedelta
 import os
 import time
 import collections
-from core.file_json import *
+from core.settings import *
 
 
-class Checker():
+class Checker:
     def __init__(self, host):
         self.ip_address = host[4]
         if host[5] == '2' or host[5] == '2c':
@@ -15,9 +15,9 @@ class Checker():
             self.session = Session(hostname=host[4], version=3, security_username=host[7], security_level=host[8],
                                    auth_protocol=host[9], auth_password=host[10], privacy_protocol=host[11],
                                    privacy_password=host[12])
-        self.settings = FIleJson("/root/home/user/NMS/data/services.json")
+        self.settings = Settings("/root/home/user/NMS/data/services.json")
 
-    def uptime(self):  # 0 - OK, 1 - warn, 2 - Crit
+    def uptime(self):
         stan = "0"
         snmp_get = self.session.get('1.3.6.1.2.1.1.3.0')
         hundredths_sec = int(snmp_get.value)
