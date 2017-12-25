@@ -13,7 +13,7 @@ class CheckEngine:
             ping_result = check.ping()
             if ping_result.split("|")[1] != '2':
                 try:
-                    self.check_snmp(host)
+                    self.check_snmp(host, ping_result, host_id, date)
                 except easysnmp.exceptions.EasySNMPTimeoutError:
                     session = scoped_session(session_factory)
                     session = session()
@@ -30,12 +30,10 @@ class CheckEngine:
                 session.commit()
                 session.rollback()
 
-    def check_snmp(self, host):
+    def check_snmp(self, host, ping_result, host_id, date):
         services_state = []
         check = Checker(host)
-        host_id = host[0]
-        date = datetime.datetime.now()
-        services_state.append(check.ping())
+        services_state.append(ping_result)
         if host[13] is not None:
             services_state.append(check.interface(host[13]))
         else:

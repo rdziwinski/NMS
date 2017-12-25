@@ -33,7 +33,7 @@ class Checker:
 
     def ping(self):
         stan = "0"
-        data = os.popen("ping " + self.ip_address + " -c 1").read()
+        data = os.popen("ping " + self.ip_address + " -c 2").read()
         time.sleep(0.1)
         data = str(data)
         if "ttl" in data:
@@ -207,12 +207,6 @@ class Checker:
                 fans_status.append("Not functioning|1")
         dictionary = dict(zip(fans, fans_status))
         return dictionary
-
-    def hostname(self):
-        stan = "0"
-        snmp_get = self.session.get('1.3.6.1.2.1.1.5.0')
-        result = snmp_get.value + "|" + stan
-        return result
 
     def cpu_utilization(self):
         cpu = []
