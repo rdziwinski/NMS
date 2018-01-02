@@ -34,7 +34,7 @@ class CheckEngine:
         services_state = []
         check = Checker(host)
         services_state.append(ping_result)
-        if host[13] is not None:
+        if host[13] is not None and host[13] != '0':
             services_state.append(check.interface(host[13]))
         else:
             services_state.append("")

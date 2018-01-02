@@ -16,6 +16,8 @@ def hosts_states():
         database = all_states.run(0)
     except OperationalError:
         return redirect(url_for('settings'))
+    except AttributeError:
+        return render_template('hosts_states.html', name="Home")
     return render_template('hosts_states.html', name="Home", database=database)
 
 
@@ -59,11 +61,11 @@ def settings():
                 return render_template('settings.html', name="Administrator",
                                        error=error, current_settings=current_settings)
             success = "Import host successful"
-            engine = CheckEngine()
-            hosts = DatabaseEngine().get_hosts()
-            pool = ThreadPool(128)
-            pool.map(engine.run, hosts)
-            RunEngine(5)
+            # engine = CheckEngine()
+            # hosts = DatabaseEngine().get_hosts()
+            # pool = ThreadPool(128)
+            # pool.map(engine.run, hosts)
+            #RunEngine(1)
     return render_template('settings.html', name="Administrator", error=error,
                            success=success, current_settings=current_settings)
 
@@ -94,7 +96,6 @@ def host(id):
     host = ShowHost()
     services = ShowStatus()
     host_data = host.get_data(id)
-    print(host_data)
     if host_data[3][2] != '2':
         services = services.get_host_services(id, 0)
         if request.form.getlist('get_interfaces'):
@@ -106,4 +107,5 @@ def host(id):
 
 
 if __name__ == '__main__':
+    RunEngine(1)
     app.run(debug=True, port=80, host='0.0.0.0')

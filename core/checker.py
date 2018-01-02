@@ -175,9 +175,9 @@ class Checker:
     def chassis_temperature(self):
         stan = '0'
         snmp_get = self.session.get('1.3.6.1.4.1.9.9.13.1.3.1.3.1')
-        if snmp_get.value == "Oid not found":
+        print(snmp_get.value)
+        if snmp_get.value == "NOSUCHINSTANCE":
             return "No such instance|1"
-
         if int(snmp_get.value) > int(self.settings.get_record('chassis_temperature', "critical")):
             stan = '2'
         elif int(snmp_get.value) > int(self.settings.get_record('chassis_temperature', "warning")):

@@ -52,7 +52,7 @@ class ImportHost:
             return 1
 
     def is_empty(self):
-        errors = []
+        self.errors = []
         v_2c = []
         v_3 = []
 
@@ -60,7 +60,7 @@ class ImportHost:
             if None in self.file_data[i]:
                 row_number = self.file_data[i].index(None) + 1
                 col_name = self.file_data[i][0]
-                errors.append(col_name + " is empty in " + str(row_number) + ". row.")
+                self.errors.append(col_name + " is empty in " + str(row_number) + ". row.")
 
         for i in range(self.ws.max_row):
             if "2c" in [self.file_data[3][i]]:
@@ -72,13 +72,13 @@ class ImportHost:
             if None in [self.file_data[4][i]]:
                 col_name2 = self.file_data[4][0]
                 row_number2 = i + 1
-                errors.append(col_name2 + " is empty in " + str(row_number2) + ". row.")
+                self.errors.append(col_name2 + " is empty in " + str(row_number2) + ". row.")
 
         for i in v_3:
             for j in range(5, 11):
                 if None in [self.file_data[j][i]]:
                     col_name3 = self.file_data[j][0]
                     row_number3 = i + 1
-                    errors.append(col_name3 + " is empty in " + str(row_number3) + ". row.")
-        if errors:
+                    self.errors.append(col_name3 + " is empty in " + str(row_number3) + ". row.")
+        if self.errors:
             return 1

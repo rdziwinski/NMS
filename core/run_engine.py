@@ -23,3 +23,8 @@ class RunEngine(object):
             except easysnmp.exceptions.EasySNMPTimeoutError:
                 pool.map(engine.run, hosts)
             time.sleep(self.interval)
+
+
+if __name__ == '__main__':
+    engine = RunEngine(60)
+    engine.run()

@@ -94,7 +94,6 @@ class DatabaseEngine:
         if all == 1:
             return database
         elif all == 0:
-            print(one_host)
             return one_host
 
     def get_checks(self):

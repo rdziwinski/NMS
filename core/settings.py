@@ -5,6 +5,7 @@ class Settings:
     def __init__(self, file_name, mode='r'):
         self.file_name = file_name
         self.mode = mode
+        self.data = self.read_file()
 
     def read_file(self):
         try:
