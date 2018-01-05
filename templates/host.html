@@ -11,7 +11,7 @@
             <h3 class="h3">{{ host_data[3][1] }}</h3>
         {% else %}
             <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12">
-                <h3 class="h3">Services</h3>
+                <h3 class="h3">Parameters</h3>
                 <table class="table" style="display: table">
                     <thead>
                         <tr>
@@ -20,16 +20,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for service in services %}
-                        {% if service[2] == '2' %}
+                    {% for parameter in parameters %}
+                        {% if parameter[2] == '2' %}
                         <tr class="text-danger">
-                        {% elif service[2] == '1' %}
+                        {% elif parameter[2] == '1' %}
                         <tr class="text-warning">
                         {% else %}
                         <tr>
                         {% endif %}
-                            <td>{{ service[0] }}</td>
-                            <td>{{ service[1] }}</td>
+                            <td>{{ parameter[0] }}</td>
+                            <td>{{ parameter[1] }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

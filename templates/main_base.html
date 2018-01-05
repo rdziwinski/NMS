@@ -22,16 +22,16 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item {% if  request.endpoint == "show_states_problems" %}active{% endif %}">
+                    <li class="nav-item {% if  request.endpoint == "hosts_states" %}active{% endif %}">
                         <a class="nav-link" href="/problems">Problems</a>
                     </li>
                     <li class="nav-item {% if  request.endpoint == "settings" %}active{% endif %}">
                         <a class="nav-link" href="/settings">Settings</a>
                     </li>
-                    <li class="nav-item {% if  request.endpoint == "show_all" %}active{% endif %}">
+                    <li class="nav-item {% if  request.endpoint == "hosts" %}active{% endif %}">
                         <a class="nav-link" href="/hosts">Hosts</a>
                     </li>
-                    <li class="nav-item {% if  request.endpoint == "show_services" %}active{% endif %}">
+                    <li class="nav-item {% if  request.endpoint == "checks" %}active{% endif %}">
                         <a class="nav-link" href="/checks">Checks</a>
                     </li>
                 </ul>

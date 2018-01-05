@@ -10,8 +10,8 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Last check time</th>
-                <th>Service name</th>
-                <th>Service state</th>
+                <th>Parameter name</th>
+                <th>Parameter state</th>
             </tr>
         </thead>
             {% for host in database %}
@@ -21,34 +21,34 @@
                     {% else %}
                         <tr>
                     {% endif %}
-                <td><a href="/host/{{ host[0] }}">{{ host[1] }}</a><br><span class="small">({{ host[2] }})</span></td>
+                        <td><a href="/host/{{ host[0] }}">{{ host[1] }}</a><br><span class="small">({{ host[2] }})</span></td>
                         <td>{{ host[3] }}</td>
                         <td>{{ host[4].strftime('%d-%m-%Y %H:%M:%S ') }}</td>
                         <td>
                             <ul class="list-unstyled">
-                                {% for service in host[5] %}
-                                    {% if service[2] == '2' %}
+                                {% for parameter in host[5] %}
+                                    {% if parameter[2] == '2' %}
                                         <li class="text-danger">
-                                    {% elif service[2] == '1' %}
+                                    {% elif parameter[2] == '1' %}
                                         <li class="text-warning">
                                     {% else %}
                                         <li style="display: block">
                                     {% endif %}
-                                        {{ service[0] }}</li>
+                                        {{ parameter[0] }}</li>
                                 {% endfor %}
                             </ul>
                         </td>
                         <td style="white-space: nowrap;">
                             <ul class="list-unstyled">
-                                {% for service in host[5] %}
-                                    {% if service[2] == '2' %}
+                                {% for parameter in host[5] %}
+                                    {% if parameter[2] == '2' %}
                                         <li class="text-danger">
-                                    {% elif service[2] == '1' %}
+                                    {% elif parameter[2] == '1' %}
                                         <li class="text-warning">
                                     {% else %}
                                         <li style="display: block">
                                     {% endif %}
-                                            {{ service[1] }}
+                                            {{ parameter[1] }}
                                         </li>
                                 {% endfor %}
                             </ul>

@@ -15,7 +15,7 @@ class Checker:
             self.session = Session(hostname=host[4], version=3, security_username=host[7], security_level=host[8],
                                    auth_protocol=host[9], auth_password=host[10], privacy_protocol=host[11],
                                    privacy_password=host[12])
-        self.settings = Settings("/root/home/user/NMS/data/services.json")
+        self.settings = Settings("/root/home/user/NMS/data/parameters.json")
 
     def uptime(self):
         stan = "0"
@@ -49,7 +49,7 @@ class Checker:
         elif "100% packet loss" in data:
             return "100% packet loss|2"
         else:
-            return "Name or service not known|2"
+            return "Name or parameter not known|2"
 
     def interface_select(self, interface):
         interfaces = []

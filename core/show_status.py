@@ -3,11 +3,11 @@ import json
 
 
 class ShowStatus(DatabaseEngine):
-    def append_service(self, status_data, type, service_name=""):
+    def append_parameter(self, status_data, type, parameter_name=""):
         if status_data is not "":
             if type == 'list':
                 data = status_data.split("|")
-                result = [service_name] + data
+                result = [parameter_name] + data
                 return result
             elif type == 'dict':
                 result = []
@@ -23,8 +23,8 @@ class ShowStatus(DatabaseEngine):
         host_data.extend((id, self.get_name(id), self.get_address(id), self.get_description(id), self.get_date(id)))
         return host_data
 
-    def get_host_services(self, id, problems):
-        services = []
+    def get_host_parameters(self, id, problems):
+        parameters = []
 
         uptime = self.get_uptime(id)
         ping = self.get_ping(id)
@@ -34,20 +34,20 @@ class ShowStatus(DatabaseEngine):
         cpu_utilization = self.get_cpu_utilization(id)
 
         if ping:
-            services.append(self.append_service(ping, "list", "RTT"))
+            parameters.append(self.append_parameter(ping, "list", "RTT"))
         if interface:
-            services.extend(self.append_service(interface, "dict"))
+            parameters.extend(self.append_parameter(interface, "dict"))
         if fan_status:
-            services.extend(self.append_service(fan_status, "dict"))
+            parameters.extend(self.append_parameter(fan_status, "dict"))
         if cpu_utilization:
-            services.extend(self.append_service(cpu_utilization, "dict"))
+            parameters.extend(self.append_parameter(cpu_utilization, "dict"))
         if uptime:
-            services.append(self.append_service(uptime, "list", "Uptime"))
+            parameters.append(self.append_parameter(uptime, "list", "Uptime"))
         if chassis_temperature:
-            services.append(self.append_service(chassis_temperature, "list", "Chassis Temp"))
+            parameters.append(self.append_parameter(chassis_temperature, "list", "Chassis Temp"))
         if problems == 1:
-            services = [item for item in services if item[2] != '0']
-        return services
+            parameters = [item for item in parameters if item[2] != '0']
+        return parameters
 
     def run(self, all):
         database = []
@@ -55,6 +55,6 @@ class ShowStatus(DatabaseEngine):
         for id in hosts_id:
             temp = []
             temp.extend(self.get_host_data(id))
-            temp.append(self.get_host_services(id, all))
+            temp.append(self.get_host_parameters(id, all))
             database.append(temp)
         return database

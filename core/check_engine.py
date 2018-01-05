@@ -31,33 +31,33 @@ class CheckEngine:
                 session.rollback()
 
     def check_snmp(self, host, ping_result, host_id, date):
-        services_state = []
+        parameters_state = []
         check = Checker(host)
-        services_state.append(ping_result)
+        parameters_state.append(ping_result)
         if host[13] is not None and host[13] != '0':
-            services_state.append(check.interface(host[13]))
+            parameters_state.append(check.interface(host[13]))
         else:
-            services_state.append("")
+            parameters_state.append("")
         if host[14] is True or host[14] is '1':
-            services_state.append(check.uptime())
+            parameters_state.append(check.uptime())
         else:
-            services_state.append("")
+            parameters_state.append("")
         if host[15] is True or host[15] is '1':
-            services_state.append(check.chassis_temperature())
+            parameters_state.append(check.chassis_temperature())
         else:
-            services_state.append("")
+            parameters_state.append("")
         if host[16] is True or host[16] is '1':
-            services_state.append(check.fan_status())
+            parameters_state.append(check.fan_status())
         else:
-            services_state.append("")
+            parameters_state.append("")
         if host[17] is True or host[17] is '1':
-            services_state.append(check.cpu_utilization())
+            parameters_state.append(check.cpu_utilization())
         else:
-            services_state.append("")
-        add_to_database = Check(host_id=host_id, date=date, ping=str(services_state[0]),
-                                interface=str(services_state[1]), uptime=str(services_state[2]),
-                                chassis_temperature=str(services_state[3]), fan_status=str(services_state[4]),
-                                cpu_utilization=str(services_state[5]))
+            parameters_state.append("")
+        add_to_database = Check(host_id=host_id, date=date, ping=str(parameters_state[0]),
+                                interface=str(parameters_state[1]), uptime=str(parameters_state[2]),
+                                chassis_temperature=str(parameters_state[3]), fan_status=str(parameters_state[4]),
+                                cpu_utilization=str(parameters_state[5]))
         session = scoped_session(session_factory)
         session = session()
         session.add(add_to_database)

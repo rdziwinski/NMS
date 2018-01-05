@@ -99,8 +99,8 @@ class DatabaseEngine:
     def get_checks(self):
         one_check = []
         database = []
-        host_and_services = self.session.query(Check).order_by(desc(Check.id)).all()
-        for check in host_and_services:
+        host_and_parameters = self.session.query(Check).order_by(desc(Check.id)).all()
+        for check in host_and_parameters:
             one_check.append(check.id)
             one_check.append(check.host_id)
             one_check.append(check.date)

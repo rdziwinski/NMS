@@ -2,7 +2,6 @@ from flask import render_template, request, Flask, redirect, url_for
 from sqlalchemy.exc import OperationalError
 from core.import_host import ImportHost
 from core.run_engine import *
-from core.settings import *
 from core.show_host import *
 from core.upload_file import UploadFile
 
@@ -26,7 +25,7 @@ def settings():
     error = ""
     success = ""
     upload_file = UploadFile('data', ['xlsx', 'jpg', 'txt'])
-    path = os.path.dirname(os.path.abspath(__file__)) + "/data/services.json"
+    path = os.path.dirname(os.path.abspath(__file__)) + "/data/parameters.json"
     settings = Settings(path)
     current_settings = settings.read_file()
     if 'file' not in request.files:
@@ -36,7 +35,8 @@ def settings():
         new_settings.extend(request.form.getlist('critical'))
         if new_settings:
             success = settings.write_file(path, settings.set_setting(current_settings, new_settings))
-        return render_template('settings.html', name="Administrator", current_settings=current_settings, success=success)
+        return render_template('settings.html', name="Administrator", current_settings=current_settings,
+                               success=success)
     if upload_file.upload_file() == 1:
         error = upload_file.print_errors()
     else:
@@ -61,11 +61,6 @@ def settings():
                 return render_template('settings.html', name="Administrator",
                                        error=error, current_settings=current_settings)
             success = "Import host successful"
-            # engine = CheckEngine()
-            # hosts = DatabaseEngine().get_hosts()
-            # pool = ThreadPool(128)
-            # pool.map(engine.run, hosts)
-            #RunEngine(1)
     return render_template('settings.html', name="Administrator", error=error,
                            success=success, current_settings=current_settings)
 
@@ -84,28 +79,31 @@ def checks():
 
 @app.route('/problems', methods=['GET'])
 def problems():
-    all_states = ShowStatus()
-    database = all_states.run(1)
-    if database[0] == 0:
-        return redirect(url_for('settings'))
-    return render_template('hosts_states.html', name="Home", database=database)
+    try:
+        all_states = ShowStatus()
+        database = all_states.run(1)
+        if database[0] == 0:
+            return redirect(url_for('settings'))
+        return render_template('hosts_states.html', name="Home", database=database)
+    except AttributeError:
+        return render_template('hosts_states.html', name="Home")
 
 
 @app.route('/host/<id>', methods=['GET', 'POST'])
 def host(id):
     host = ShowHost()
-    services = ShowStatus()
+    parameters = ShowStatus()
     host_data = host.get_data(id)
     if host_data[3][2] != '2':
-        services = services.get_host_services(id, 0)
+        parameters = parameters.get_host_parameters(id, 0)
         if request.form.getlist('get_interfaces'):
             interfaces = host.get_interfaces(id)
             return render_template('host.html', name="Host", host_data=host_data, interfaces=interfaces,
-                                   services=services)
-        return render_template('host.html', name="Host", host_data=host_data, services=services)
+                                   parameters=parameters)
+        return render_template('host.html', name="Host", host_data=host_data, parameters=parameters)
     return render_template('host.html', name="Host", host_data=host_data, down=1)
 
 
 if __name__ == '__main__':
-    RunEngine(1)
+    RunEngine(60)
     app.run(debug=True, port=80, host='0.0.0.0')
