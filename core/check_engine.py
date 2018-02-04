@@ -31,6 +31,7 @@ class CheckEngine:
                 session.rollback()
 
     def check_snmp(self, host, ping_result, host_id, date):
+        print(date)
         parameters_state = []
         check = Checker(host)
         parameters_state.append(ping_result)

@@ -7,17 +7,17 @@ import threading
 
 
 class RunEngine(object):
-    def __init__(self, interval=1):
+    def __init__(self, interval=60):
         self.interval = interval
         thread = threading.Thread(target=self.run, args=())
-        thread.daemon = True
+        #thread.daemon = True
         thread.start()
 
     def run(self):
         while True:
             engine = CheckEngine()
             hosts = DatabaseEngine().get_hosts()
-            pool = ThreadPool(128)
+            pool = ThreadPool(64)
             try:
                 pool.map(engine.run, hosts)
             except easysnmp.exceptions.EasySNMPTimeoutError:
@@ -25,6 +25,6 @@ class RunEngine(object):
             time.sleep(self.interval)
 
 
-if __name__ == '__main__':
-    engine = RunEngine(60)
-    engine.run()
+# if __name__ == '__main__':
+#     engine = RunEngine(60)
+#     engine.run()

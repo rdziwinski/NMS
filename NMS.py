@@ -106,4 +106,4 @@ def host(id):
 
 if __name__ == '__main__':
     RunEngine(60)
-    app.run(debug=True, port=80, host='0.0.0.0')
+    app.run(debug=False, port=80, host='0.0.0.0', use_reloader=False)
